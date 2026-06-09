@@ -1,0 +1,74 @@
+{
+  "general": {
+    "accessibility": {
+      "skip_to_text": "Skip to text",
+      "refresh_page": "Choosing a selection results in a full page refresh.",
+      "link_messages": {
+        "new_window": "Opens in a new window"
+      }
+    },
+    "meta": {
+      "tags": "Tagged \"{{ tags }}\"",
+      "page": "Page {{ page }}"
+    },
+    "breadcrumbs": {
+      "home": "Home",
+      "search": "Search",
+      "cart": "Cart"
+    }
+  },
+  "sections": {
+    "header": {
+      "menu": "Menu",
+      "cart": "Cart",
+      "search": "Search"
+    },
+    "footer": {
+      "copyright": "© {{ year }} {{ shop_name }}. All rights reserved.",
+      "follow_us": "Follow us"
+    },
+    "cart": {
+      "title": "Your Cart",
+      "empty": "Your cart is empty",
+      "continue_shopping": "Continue Shopping",
+      "checkout": "Check Out",
+      "subtotal": "Subtotal",
+      "shipping_note": "Shipping & taxes calculated at checkout",
+      "cart_error": "There was an error while updating your cart",
+      "quantity_error": "You can only add [quantity] of this item to your cart",
+      "remove": "Remove",
+      "update": "Update"
+    }
+  },
+  "products": {
+    "product": {
+      "add_to_cart": "Add to Cart",
+      "sold_out": "Sold Out",
+      "unavailable": "Unavailable",
+      "quantity": "Quantity",
+      "price": "Price",
+      "from_price_html": "From {{ price }}",
+      "subscribe_and_save": "Subscribe & Save",
+      "one_time_purchase": "One-time Purchase",
+      "subscription_discount": "Save {{ discount }}% with subscription",
+      "subscription_benefits": {
+        "save_money": "Save money every order",
+        "never_run_out": "Never run out",
+        "cancel_anytime": "Cancel anytime"
+      }
+    }
+  },
+  "templates": {
+    "homepage": {
+      "shop_by_goal": "Shop by Goal",
+      "featured_products": "Featured Products",
+      "trust_title": "Why Choose Vitasy"
+    }
+  },
+  "accessibility": {
+    "skip_to_content": "Skip to content",
+    "close": "Close",
+    "open_menu": "Open menu",
+    "open_cart": "Open cart"
+  }
+}
