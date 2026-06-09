@@ -1,0 +1,71 @@
+{%- comment -%}
+  Pagination Snippet
+  Renders pagination for collections and blogs
+  Accepts: paginate (object) - Paginate object from Shopify
+{%- endcomment -%}
+
+{%- if paginate.pages > 1 -%}
+  <nav class="pagination" role="navigation" aria-label="Pagination">
+    {%- if paginate.previous -%}
+      <a 
+        href="{{ paginate.previous.url }}" 
+        class="pagination__item"
+        aria-label="Previous page"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="15 18 9 12 15 6"></polyline>
+        </svg>
+      </a>
+    {%- else -%}
+      <span class="pagination__item pagination__item--disabled" aria-hidden="true">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="15 18 9 12 15 6"></polyline>
+        </svg>
+      </span>
+    {%- endif -%}
+    
+    {%- for part in paginate.parts -%}
+      {%- if part.is_link -%}
+        <a 
+          href="{{ part.url }}" 
+          class="pagination__item"
+          aria-label="Page {{ part.title }}"
+        >
+          {{ part.title }}
+        </a>
+      {%- else -%}
+        {%- if part.title == paginate.current_page -%}
+          <span 
+            class="pagination__item pagination__item--active" 
+            aria-current="page"
+            aria-label="Page {{ part.title }}"
+          >
+            {{ part.title }}
+          </span>
+        {%- else -%}
+          <span class="pagination__item pagination__item--ellipsis" aria-hidden="true">
+            &hellip;
+          </span>
+        {%- endif -%}
+      {%- endif -%}
+    {%- endfor -%}
+    
+    {%- if paginate.next -%}
+      <a 
+        href="{{ paginate.next.url }}" 
+        class="pagination__item"
+        aria-label="Next page"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="9 18 15 12 9 6"></polyline>
+        </svg>
+      </a>
+    {%- else -%}
+      <span class="pagination__item pagination__item--disabled" aria-hidden="true">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="9 18 15 12 9 6"></polyline>
+        </svg>
+      </span>
+    {%- endif -%}
+  </nav>
+{%- endif -%}

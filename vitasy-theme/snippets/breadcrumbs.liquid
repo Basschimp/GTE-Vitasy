@@ -1,0 +1,76 @@
+{%- comment -%}
+  Breadcrumbs Snippet
+  Renders breadcrumb navigation
+  Accepts: current (string) - Current page title
+{%- endcomment -%}
+
+<nav class="breadcrumbs" aria-label="Breadcrumb">
+  <ol class="breadcrumbs__list">
+    <li class="breadcrumbs__item">
+      <a href="{{ routes.root_url }}" class="breadcrumbs__link">Home</a>
+    </li>
+    
+    {%- if template contains 'collection' and collection.handle != 'all' -%}
+      <li class="breadcrumbs__separator" aria-hidden="true">/</li>
+      <li class="breadcrumbs__item">
+        <a href="{{ routes.collections_url }}" class="breadcrumbs__link">Shop</a>
+      </li>
+      
+      {%- if collection.parent_collection -%}
+        <li class="breadcrumbs__separator" aria-hidden="true">/</li>
+        <li class="breadcrumbs__item">
+          <a href="{{ collection.parent_collection.url }}" class="breadcrumbs__link">{{ collection.parent_collection.title }}</a>
+        </li>
+      {%- endif -%}
+      
+      <li class="breadcrumbs__separator" aria-hidden="true">/</li>
+      <li class="breadcrumbs__item">
+        <span class="breadcrumbs__current" aria-current="page">{{ collection.title }}</span>
+      </li>
+    {%- elsif template contains 'product' -%}
+      {%- for collection in product.collections limit: 1 -%}
+        <li class="breadcrumbs__separator" aria-hidden="true">/</li>
+        <li class="breadcrumbs__item">
+          <a href="{{ collection.url }}" class="breadcrumbs__link">{{ collection.title }}</a>
+        </li>
+      {%- else -%}
+        <li class="breadcrumbs__separator" aria-hidden="true">/</li>
+        <li class="breadcrumbs__item">
+          <a href="{{ routes.collections_url }}" class="breadcrumbs__link">Shop</a>
+        </li>
+      {%- endfor -%}
+      
+      <li class="breadcrumbs__separator" aria-hidden="true">/</li>
+      <li class="breadcrumbs__item">
+        <span class="breadcrumbs__current" aria-current="page">{{ product.title }}</span>
+      </li>
+    {%- elsif template contains 'blog' -%}
+      <li class="breadcrumbs__separator" aria-hidden="true">/</li>
+      <li class="breadcrumbs__item">
+        <a href="{{ routes.blogs_url }}" class="breadcrumbs__link">Blog</a>
+      </li>
+      
+      {%- if template contains 'article' -%}
+        <li class="breadcrumbs__separator" aria-hidden="true">/</li>
+        <li class="breadcrumbs__item">
+          <span class="breadcrumbs__current" aria-current="page">{{ article.title }}</span>
+        </li>
+      {%- endif -%}
+    {%- elsif template contains 'page' -%}
+      <li class="breadcrumbs__separator" aria-hidden="true">/</li>
+      <li class="breadcrumbs__item">
+        <span class="breadcrumbs__current" aria-current="page">{{ page.title }}</span>
+      </li>
+    {%- elsif template contains 'cart' -%}
+      <li class="breadcrumbs__separator" aria-hidden="true">/</li>
+      <li class="breadcrumbs__item">
+        <span class="breadcrumbs__current" aria-current="page">Cart</span>
+      </li>
+    {%- elsif template contains 'search' -%}
+      <li class="breadcrumbs__separator" aria-hidden="true">/</li>
+      <li class="breadcrumbs__item">
+        <span class="breadcrumbs__current" aria-current="page">Search</span>
+      </li>
+    {%- endif -%}
+  </ol>
+</nav>

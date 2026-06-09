@@ -1,0 +1,90 @@
+<section class="trust-bar">
+  <div class="container">
+    <ul class="trust-bar__list">
+      {%- for block in section.blocks -%}
+        <li class="trust-bar__item" {{ block.shopify_attributes }}>
+          {%- if block.settings.icon != blank -%}
+            <svg class="trust-bar__icon" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+              {{ block.settings.icon }}
+            </svg>
+          {%- else -%}
+            <svg class="trust-bar__icon" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M24 4L8 12V20C8 32.8 14.9 44.6 24 48C33.1 44.6 40 32.8 40 20V12L24 4Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M17 24L22 29L31 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          {%- endif -%}
+          
+          {%- if block.settings.label != blank -%}
+            <span class="trust-bar__label">{{ block.settings.label }}</span>
+          {%- endif -%}
+        </li>
+      {%- endfor -%}
+    </ul>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Trust Bar",
+  "class": "trust-bar-section",
+  "tag": "section",
+  "settings": [],
+  "blocks": [
+    {
+      "type": "trust_item",
+      "name": "Trust Item",
+      "settings": [
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Label",
+          "default": "Third-Party Tested"
+        },
+        {
+          "type": "textarea",
+          "id": "icon",
+          "label": "SVG Icon Code",
+          "info": "Paste SVG path data only (without <path> tags)"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Trust Bar",
+      "blocks": [
+        {
+          "type": "trust_item",
+          "settings": {
+            "label": "Third-Party Tested"
+          }
+        },
+        {
+          "type": "trust_item",
+          "settings": {
+            "label": "GMP Manufactured"
+          }
+        },
+        {
+          "type": "trust_item",
+          "settings": {
+            "label": "Clinically Dosed"
+          }
+        },
+        {
+          "type": "trust_item",
+          "settings": {
+            "label": "Quality Ingredients"
+          }
+        },
+        {
+          "type": "trust_item",
+          "settings": {
+            "label": "Money-Back Guarantee"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
