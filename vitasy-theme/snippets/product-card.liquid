@@ -1,0 +1,87 @@
+{%- comment -%}
+  Product Card Snippet
+  Renders a product card with image, title, price, reviews, and quick add
+  Accepts: product (object) - Product object from Shopify
+{%- endcomment -%}
+
+<div class="product-card" data-product-id="{{ product.id }}">
+  {%- if product.compare_at_price > product.price -%}
+    <span class="product-card__badge product-card__badge--sale">Sale</span>
+  {%- elsif product.available == false -%}
+    <span class="product-card__badge">Sold Out</span>
+  {%- elsif product.tags contains 'Best Seller' -%}
+    <span class="product-card__badge">Best Seller</span>
+  {%- endif -%}
+  
+  <div class="product-card__image-wrapper">
+    <a href="{{ product.url }}">
+      {%- if product.featured_media -%}
+        <img 
+          src="{{ product.featured_media | image_url: width: 600 }}" 
+          alt="{{ product.featured_media.alt | default: product.title }}"
+          class="product-card__image"
+          loading="lazy"
+          width="{{ product.featured_media.width }}"
+          height="{{ product.featured_media.height }}"
+        >
+      {%- else -%}
+        {{ 'product-1' | placeholder_svg_tag: 'product-card__image' }}
+      {%- endif -%}
+    </a>
+    
+    {%- if product.available -%}
+      <div class="product-card__quick-add">
+        <button 
+          class="btn btn--primary btn--full-width"
+          data-add-to-cart
+          data-product-id="{{ product.id }}"
+          data-variant-id="{{ product.selected_or_first_available_variant.id }}"
+        >
+          Quick Add
+        </button>
+      </div>
+    {%- endif -%}
+  </div>
+  
+  <div class="product-card__content">
+    {%- if product.vendor != blank -%}
+      <span class="product-card__vendor">{{ product.vendor }}</span>
+    {%- endif -%}
+    
+    <h3 class="product-card__title">
+      <a href="{{ product.url }}">{{ product.title }}</a>
+    </h3>
+    
+    <div class="product-card__price">
+      <span class="product-card__price-current">
+        {%- if product.price_varies -%}
+          From {{ product.price_min | money }}
+        {%- else -%}
+          {{ product.price | money }}
+        {%- endif -%}
+      </span>
+      
+      {%- if product.compare_at_price > product.price -%}
+        <span class="product-card__price-compare">{{ product.compare_at_price | money }}</span>
+      {%- endif -%}
+    </div>
+    
+    {%- if settings.reviews_enabled -%}
+      <div class="product-card__reviews">
+        <div class="product-card__stars" aria-label="{{ product.metafields.reviews.average.value | default: 0 }} out of 5 stars">
+          {%- assign rating = product.metafields.reviews.average.value | default: 0 | round -%}
+          {%- for i in (1..5) -%}
+            {%- if i <= rating -%}
+              ★
+            {%- else -%}
+              ☆
+            {%- endif -%}
+          {%- endfor -%}
+        </div>
+        <span class="product-card__review-count">
+          ({{ product.metafields.reviews.review_count.value | default: 0 }})
+        </span>
+      </div>
+    {%- endif -%}
+  </div>
+</div>

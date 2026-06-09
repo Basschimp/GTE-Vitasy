@@ -1,0 +1,118 @@
+<footer class="footer" role="contentinfo">
+  <div class="container">
+    <div class="footer__grid">
+      <!-- Brand Column -->
+      <div class="footer__brand">
+        <div class="footer__logo">
+          {%- if section.settings.footer_logo != blank -%}
+            <img 
+              src="{{ section.settings.footer_logo | image_url: width: 150 }}" 
+              alt="{{ shop.name }}"
+              width="{{ section.settings.footer_logo.width }}"
+              height="{{ section.settings.footer_logo.height }}"
+            >
+          {%- else -%}
+            <span style="font-family: var(--font-heading); font-size: 1.5rem; font-weight: 700; color: var(--color-white);">
+              {{ shop.name }}
+            </span>
+          {%- endif -%}
+        </div>
+        <p class="footer__tagline">
+          {{ section.settings.footer_tagline | default: "Science-Backed Supplements for Modern Health" }}
+        </p>
+      </div>
+      
+      <!-- Shop Column -->
+      <div class="footer__column">
+        <h3 class="footer__heading">Shop</h3>
+        <ul class="footer__list">
+          {%- for link in section.settings.footer_menu_shop.links -%}
+            <li class="footer__list-item">
+              <a href="{{ link.url }}" class="footer__link">{{ link.title }}</a>
+            </li>
+          {%- endfor -%}
+        </ul>
+      </div>
+      
+      <!-- Learn Column -->
+      <div class="footer__column">
+        <h3 class="footer__heading">Learn</h3>
+        <ul class="footer__list">
+          {%- for link in section.settings.footer_menu_learn.links -%}
+            <li class="footer__list-item">
+              <a href="{{ link.url }}" class="footer__link">{{ link.title }}</a>
+            </li>
+          {%- endfor -%}
+        </ul>
+      </div>
+      
+      <!-- Support Column -->
+      <div class="footer__column">
+        <h3 class="footer__heading">Support</h3>
+        <ul class="footer__list">
+          {%- for link in section.settings.footer_menu_support.links -%}
+            <li class="footer__list-item">
+              <a href="{{ link.url }}" class="footer__link">{{ link.title }}</a>
+            </li>
+          {%- endfor -%}
+        </ul>
+      </div>
+    </div>
+    
+    <!-- Footer Bottom -->
+    <div class="footer__bottom">
+      <p class="footer__copyright">
+        &copy; {{ 'now' | date: '%Y' }} {{ shop.name }}. All rights reserved.
+      </p>
+      
+      {%- if section.settings.show_payment_icons -%}
+        <div class="footer__payment-icons">
+          {%- for type in shop.enabled_payment_types -%}
+            {{ type | payment_type_svg_tag: class: 'footer__payment-icon' }}
+          {%- endfor -%}
+        </div>
+      {%- endif -%}
+    </div>
+  </div>
+</footer>
+
+{% schema %}
+{
+  "name": "Footer",
+  "class": "footer-section",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "footer_logo",
+      "label": "Footer Logo"
+    },
+    {
+      "type": "text",
+      "id": "footer_tagline",
+      "label": "Footer Tagline",
+      "default": "Science-Backed Supplements for Modern Health"
+    },
+    {
+      "type": "link_list",
+      "id": "footer_menu_shop",
+      "label": "Footer Menu - Shop"
+    },
+    {
+      "type": "link_list",
+      "id": "footer_menu_learn",
+      "label": "Footer Menu - Learn"
+    },
+    {
+      "type": "link_list",
+      "id": "footer_menu_support",
+      "label": "Footer Menu - Support"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_payment_icons",
+      "label": "Show Payment Icons",
+      "default": true
+    }
+  ]
+}
+{% endschema %}
