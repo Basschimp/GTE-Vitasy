@@ -1,134 +1,136 @@
-{%- comment -%}
-  Cart Drawer Snippet
-  Renders the cart drawer with items, subtotal, and checkout button
-{%- endcomment -%}
-
-<div class="cart-drawer" id="CartDrawer" role="dialog" aria-modal="true" aria-labelledby="CartDrawerTitle">
-  <div class="cart-drawer__header">
-    <h2 class="cart-drawer__title" id="CartDrawerTitle">Your Cart</h2>
-    <button class="cart-drawer__close" aria-label="Close cart" id="CartDrawerClose">
-      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <line x1="18" y1="6" x2="6" y2="18"></line>
-        <line x1="6" y1="6" x2="18" y2="18"></line>
-      </svg>
-    </button>
+<div class="cart-drawer" data-cart-drawer style="position: fixed; top: 0; right: -100%; width: 100%; max-width: 450px; height: 100vh; background: white; box-shadow: -2px 0 10px rgba(0,0,0,0.1); z-index: 9999; transition: right 0.3s ease; display: flex; flex-direction: column;">
+  <div class="cart-drawer-header" style="display: flex; justify-content: space-between; align-items: center; padding: 1.5rem; border-bottom: 1px solid #eee;">
+    <h2 style="font-size: 1.25rem; margin: 0;">Your Cart</h2>
+    <button type="button" class="cart-drawer-close" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; padding: 0.5rem;">&times;</button>
   </div>
   
-  <div class="cart-drawer__items" id="CartDrawerItems">
-    {%- if cart.item_count > 0 -%}
-      {%- for item in cart.items -%}
-        <div class="cart-item" data-line-item="{{ forloop.index }}">
-          <img 
-            src="{{ item.image | image_url: width: 160 }}" 
-            alt="{{ item.title }}"
-            class="cart-item__image"
-            loading="lazy"
-            width="80"
-            height="80"
-          >
-          
-          <div class="cart-item__details">
-            <h3 class="cart-item__title">{{ item.product.title }}</h3>
-            
-            {%- if item.variant.title != 'Default Title' -%}
-              <p class="cart-item__variant">{{ item.variant.title }}</p>
-            {%- endif -%}
-            
-            <p class="cart-item__price">{{ item.final_line_price | money }}</p>
-            
-            <div class="cart-item__quantity">
-              <button 
-                class="cart-item__qty-btn" 
-                aria-label="Decrease quantity"
-                data-qty-update
-                data-line="{{ forloop.index }}"
-                data-qty="{{ item.quantity | minus: 1 }}"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <line x1="5" y1="12" x2="19" y2="12"></line>
-                </svg>
-              </button>
-              
-              <input 
-                type="number" 
-                class="cart-item__qty-input" 
-                value="{{ item.quantity }}" 
-                min="1"
-                data-qty-input
-                data-line="{{ forloop.index }}"
-              >
-              
-              <button 
-                class="cart-item__qty-btn" 
-                aria-label="Increase quantity"
-                data-qty-update
-                data-line="{{ forloop.index }}"
-                data-qty="{{ item.quantity | plus: 1 }}"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <line x1="12" y1="5" x2="12" y2="19"></line>
-                  <line x1="5" y1="12" x2="19" y2="12"></line>
-                </svg>
-              </button>
-            </div>
-            
-            <button 
-              class="cart-item__remove"
-              data-remove-item
-              data-line="{{ forloop.index }}"
-            >
-              Remove
-            </button>
-          </div>
-        </div>
-      {%- endfor -%}
-    {%- else -%}
-      <p style="text-align: center; padding: var(--spacing-12); color: var(--color-text);">
-        Your cart is empty.
-      </p>
-    {%- endif -%}
-  </div>
-  
-  {%- if cart.item_count > 0 -%}
-    <div class="cart-drawer__footer">
-      <div class="cart-drawer__subtotal">
-        <span>Subtotal</span>
-        <span data-cart-subtotal>{{ cart.total_price | money }}</span>
-      </div>
-      
-      <p style="font-size: var(--text-xs); color: var(--color-text); opacity: 0.8; margin-bottom: var(--spacing-4);">
-        Shipping and taxes calculated at checkout.
-      </p>
-      
-      <a 
-        href="{{ routes.cart_url }}" 
-        class="btn btn--primary btn--lg cart-drawer__checkout-btn"
-      >
-        Checkout
-      </a>
-      
-      {%- if section.settings.show_subscription_note -%}
-        <p style="font-size: var(--text-xs); text-align: center; margin-top: var(--spacing-4); color: var(--color-secondary-green);">
-          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle;">
-            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-          </svg>
-          Subscribe & Save up to {{ settings.subscription_discount }}% on eligible items
-        </p>
-      {%- endif -%}
+  <div class="cart-drawer-items" style="flex: 1; overflow-y: auto; padding: 1.5rem;">
+    <!-- Cart items will be loaded here via AJAX -->
+    <div class="cart-drawer-empty" style="text-align: center; padding: 2rem;">
+      <p>Your cart is empty</p>
+      <a href="/collections/all" class="button" style="display: inline-block; margin-top: 1rem;">Continue Shopping</a>
     </div>
-  {%- endif -%}
+  </div>
+  
+  <div class="cart-drawer-footer" style="padding: 1.5rem; border-top: 1px solid #eee; background: #f9f9f9;">
+    <div class="cart-drawer-subtotal" style="display: flex; justify-content: space-between; margin-bottom: 1rem; font-size: 1.125rem;">
+      <span>Subtotal</span>
+      <span class="cart-drawer-subtotal-value">{{ cart.total_price | money }}</span>
+    </div>
+    
+    <p class="free-shreshold-message" style="font-size: 0.875rem; color: #666; margin-bottom: 1rem; text-align: center;">
+      {% assign free_threshold = settings.cart_free_shipping_threshold | times: 100 %}
+      {% assign remaining = free_threshold | minus: cart.total_price %}
+      {% if remaining > 0 %}
+        Add {{ remaining | money }} more for free shipping!
+      {% else %}
+        You've unlocked free shipping! 🎉
+      {% endif %}
+    </p>
+    
+    <a href="/cart" class="button" style="display: block; text-align: center; margin-bottom: 0.5rem;">View Cart</a>
+    <button type="submit" class="checkout-btn button" style="width: 100%; background: var(--color-text);">Checkout</button>
+  </div>
 </div>
 
-{% schema %}
-{
-  "name": "Cart Drawer",
-  "settings": [
-    {
-      "type": "checkbox",
-      "id": "show_subscription_note",
-      "label": "Show Subscription Note",
-      "default": true
+<div class="cart-drawer-overlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 9998; opacity: 0; visibility: hidden; transition: all 0.3s ease;"></div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const cartDrawer = document.querySelector('[data-cart-drawer]');
+    const cartDrawerOverlay = document.querySelector('.cart-drawer-overlay');
+    const cartDrawerClose = document.querySelector('.cart-drawer-close');
+    
+    function openCartDrawer() {
+      cartDrawer.classList.add('is-open');
+      cartDrawer.style.right = '0';
+      cartDrawerOverlay.style.opacity = '1';
+      cartDrawerOverlay.style.visibility = 'visible';
+      loadCartItems();
     }
-  ]
-}
-{% endschema %}
+    
+    function closeCartDrawer() {
+      cartDrawer.classList.remove('is-open');
+      cartDrawer.style.right = '-100%';
+      cartDrawerOverlay.style.opacity = '0';
+      cartDrawerOverlay.style.visibility = 'hidden';
+    }
+    
+    cartDrawerClose.addEventListener('click', closeCartDrawer);
+    cartDrawerOverlay.addEventListener('click', closeCartDrawer);
+    
+    // Listen for custom event to open drawer
+    document.addEventListener('openCartDrawer', openCartDrawer);
+    
+    // Quick add buttons
+    document.querySelectorAll('.quick-add-btn').forEach(btn => {
+      btn.addEventListener('click', function() {
+        const variantId = this.dataset.variantId;
+        
+        fetch(window.routes.cart_add_url, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
+          },
+          body: JSON.stringify({
+            id: variantId,
+            quantity: 1
+          })
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.status === 'ok') {
+            openCartDrawer();
+            updateCartCount();
+          }
+        });
+      });
+    });
+    
+    function loadCartItems() {
+      fetch('/cart.js')
+        .then(response => response.json())
+        .then(cart => {
+          const container = document.querySelector('.cart-drawer-items');
+          
+          if (cart.items.length === 0) {
+            container.innerHTML = '<div class="cart-drawer-empty" style="text-align: center; padding: 2rem;"><p>Your cart is empty</p><a href="/collections/all" class="button" style="display: inline-block; margin-top: 1rem;">Continue Shopping</a></div>';
+            return;
+          }
+          
+          let html = '';
+          cart.items.forEach(item => {
+            html += '<div class="cart-item" style="display: flex; gap: 1rem; margin-bottom: 1rem; padding-bottom: 1rem; border-bottom: 1px solid #eee;">';
+            html += '<img src="' + item.image + '" alt="' + item.title + '" style="width: 80px; height: 80px; object-fit: cover; border-radius: 4px;">';
+            html += '<div style="flex: 1;">';
+            html += '<h4 style="margin: 0 0 0.5rem 0; font-size: 0.875rem;">' + item.product_title + '</h4>';
+            html += '<p style="margin: 0 0 0.5rem 0; color: #666; font-size: 0.75rem;">' + item.variant_title + '</p>';
+            html += '<div style="display: flex; justify-content: space-between; align-items: center;">';
+            html += '<div style="display: flex; align-items: center; gap: 0.5rem;">';
+            html += '<button class="item-qty-minus" data-line="{{ forloop.index }}" style="width: 28px; height: 28px; border: 1px solid #ddd; background: white; cursor: pointer;">-</button>';
+            html += '<span>' + item.quantity + '</span>';
+            html += '<button class="item-qty-plus" data-line="{{ forloop.index }}" style="width: 28px; height: 28px; border: 1px solid #ddd; background: white; cursor: pointer;">+</button>';
+            html += '</div>';
+            html += '<span>' + item.final_line_price + '</span>';
+            html += '</div>';
+            html += '</div>';
+            html += '</div>';
+          });
+          
+          container.innerHTML = html;
+        });
+    }
+    
+    function updateCartCount() {
+      fetch('/cart.js')
+        .then(response => response.json())
+        .then(cart => {
+          document.querySelectorAll('.cart-count').forEach(el => {
+            el.textContent = cart.item_count;
+          });
+          document.querySelector('.cart-drawer-subtotal-value').textContent = '{{ cart.total_price | money }}';
+        });
+    }
+  });
+</script>

@@ -1,37 +1,41 @@
 ```
-# Compressed files
-*.zip
-
-# Shopify theme specific
-.vinyl-cache/
-.sass-cache/
-*.liquid.map
+# Shopify theme specific ignores
+.vinylfs*
+.shopify/
+.config/shopify/
 
 # Dependencies
 node_modules/
 
 # Build artifacts
+assets/*.js.map
+assets/*.css.map
 dist/
 build/
-target/
 
 # Environment
 .env
 .env.local
-*.env.*
+.env.*
 
 # Logs
 *.log
 
-# Editors
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Editor files
 .vscode/
 .idea/
 *.swp
 *.swo
+*.tmp
 
-# System
-.DS_Store
-Thumbs.db
+# Coverage
+coverage/
+htmlcov/
+.coverage
 
 # Python
 __pycache__/
@@ -41,16 +45,15 @@ __pycache__/
 .Python
 *.so
 
-# Coverage
-coverage/
-htmlcov/
-.coverage
-
-# Testing
-.pytest_cache/
-.mypy_cache/
+# Ruby
+*.gem
+*.rbc
+.bundle/
+vendor/bundle/
+.ruby-version
+.ruby-gemset
 
 # Temporary files
-*.tmp
-*.temp
+tmp/
+temp/
 ```

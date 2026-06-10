@@ -1,75 +1,45 @@
-{%- comment -%}
-  Breadcrumbs Snippet
-  Renders breadcrumb navigation
-  Accepts: current (string) - Current page title
-{%- endcomment -%}
+{%- liquid
+  assign current = collection | default: product | default: page
+-%}
 
-<nav class="breadcrumbs" aria-label="Breadcrumb">
-  <ol class="breadcrumbs__list">
-    <li class="breadcrumbs__item">
-      <a href="{{ routes.root_url }}" class="breadcrumbs__link">Home</a>
+<nav class="breadcrumbs" aria-label="Breadcrumb" style="margin-bottom: 1.5rem; font-size: 0.875rem;">
+  <ol class="breadcrumb-list" style="display: flex; gap: 0.5rem; list-style: none; padding: 0; margin: 0; flex-wrap: wrap;">
+    <li class="breadcrumb-item">
+      <a href="/" style="color: #666; text-decoration: none;">Home</a>
     </li>
     
-    {%- if template contains 'collection' and collection.handle != 'all' -%}
-      <li class="breadcrumbs__separator" aria-hidden="true">/</li>
-      <li class="breadcrumbs__item">
-        <a href="{{ routes.collections_url }}" class="breadcrumbs__link">Shop</a>
-      </li>
-      
-      {%- if collection.parent_collection -%}
-        <li class="breadcrumbs__separator" aria-hidden="true">/</li>
-        <li class="breadcrumbs__item">
-          <a href="{{ collection.parent_collection.url }}" class="breadcrumbs__link">{{ collection.parent_collection.title }}</a>
+    {%- if collection -%}
+      {% if collection.handle != blank and collection.handle != 'all' %}
+        <li class="breadcrumb-separator" style="color: #999;">/</li>
+        <li class="breadcrumb-item">
+          <a href="/collections/all" style="color: #666; text-decoration: none;">Collections</a>
         </li>
-      {%- endif -%}
-      
-      <li class="breadcrumbs__separator" aria-hidden="true">/</li>
-      <li class="breadcrumbs__item">
-        <span class="breadcrumbs__current" aria-current="page">{{ collection.title }}</span>
-      </li>
-    {%- elsif template contains 'product' -%}
-      {%- for collection in product.collections limit: 1 -%}
-        <li class="breadcrumbs__separator" aria-hidden="true">/</li>
-        <li class="breadcrumbs__item">
-          <a href="{{ collection.url }}" class="breadcrumbs__link">{{ collection.title }}</a>
+        <li class="breadcrumb-separator" style="color: #999;">/</li>
+        <li class="breadcrumb-item">
+          <span style="color: var(--color-text);">{{ collection.title }}</span>
         </li>
-      {%- else -%}
-        <li class="breadcrumbs__separator" aria-hidden="true">/</li>
-        <li class="breadcrumbs__item">
-          <a href="{{ routes.collections_url }}" class="breadcrumbs__link">Shop</a>
-        </li>
-      {%- endfor -%}
-      
-      <li class="breadcrumbs__separator" aria-hidden="true">/</li>
-      <li class="breadcrumbs__item">
-        <span class="breadcrumbs__current" aria-current="page">{{ product.title }}</span>
+      {% endif %}
+    {%- elsif product -%}
+      <li class="breadcrumb-separator" style="color: #999;">/</li>
+      <li class="breadcrumb-item">
+        <a href="/collections/all" style="color: #666; text-decoration: none;">Products</a>
       </li>
-    {%- elsif template contains 'blog' -%}
-      <li class="breadcrumbs__separator" aria-hidden="true">/</li>
-      <li class="breadcrumbs__item">
-        <a href="{{ routes.blogs_url }}" class="breadcrumbs__link">Blog</a>
+      {% if product.collections.size > 0 %}
+        {% for collection in product.collections limit: 1 %}
+          <li class="breadcrumb-separator" style="color: #999;">/</li>
+          <li class="breadcrumb-item">
+            <a href="{{ collection.url }}" style="color: #666; text-decoration: none;">{{ collection.title }}</a>
+          </li>
+        {% endfor %}
+      {% endif %}
+      <li class="breadcrumb-separator" style="color: #999;">/</li>
+      <li class="breadcrumb-item">
+        <span style="color: var(--color-text);">{{ product.title }}</span>
       </li>
-      
-      {%- if template contains 'article' -%}
-        <li class="breadcrumbs__separator" aria-hidden="true">/</li>
-        <li class="breadcrumbs__item">
-          <span class="breadcrumbs__current" aria-current="page">{{ article.title }}</span>
-        </li>
-      {%- endif -%}
-    {%- elsif template contains 'page' -%}
-      <li class="breadcrumbs__separator" aria-hidden="true">/</li>
-      <li class="breadcrumbs__item">
-        <span class="breadcrumbs__current" aria-current="page">{{ page.title }}</span>
-      </li>
-    {%- elsif template contains 'cart' -%}
-      <li class="breadcrumbs__separator" aria-hidden="true">/</li>
-      <li class="breadcrumbs__item">
-        <span class="breadcrumbs__current" aria-current="page">Cart</span>
-      </li>
-    {%- elsif template contains 'search' -%}
-      <li class="breadcrumbs__separator" aria-hidden="true">/</li>
-      <li class="breadcrumbs__item">
-        <span class="breadcrumbs__current" aria-current="page">Search</span>
+    {%- elsif page -%}
+      <li class="breadcrumb-separator" style="color: #999;">/</li>
+      <li class="breadcrumb-item">
+        <span style="color: var(--color-text);">{{ page.title }}</span>
       </li>
     {%- endif -%}
   </ol>
