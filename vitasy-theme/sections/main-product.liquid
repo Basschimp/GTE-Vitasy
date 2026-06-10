@@ -1,266 +1,691 @@
-{%- assign current_variant = product.selected_or_first_available_variant -%}
-{%- assign product_form_id = 'product-form-' | append: section.id -%}
+{%- style -%}
+  .product {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 3rem 2rem;
+  }
 
-<div class="product-page container" data-section-id="{{ section.id }}" data-section-type="product">
-  {% render 'breadcrumbs', product: product %}
+  .product__container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+  }
 
-  <div class="product-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin: 2rem 0;">
-    <!-- Product Gallery -->
-    <div class="product-media">
-      {% if product.media.size > 0 %}
-        <div class="product-main-image">
-          <img 
-            src="{{ product.featured_media | image_url: width: 800 }}" 
-            alt="{{ product.featured_media.alt | escape }}"
-            loading="eager"
-            style="width: 100%; height: auto; border-radius: 4px;"
-          >
-        </div>
-        {% if product.media.size > 1 %}
-          <div class="product-thumbnails" style="display: flex; gap: 0.5rem; margin-top: 1rem; flex-wrap: wrap;">
-            {% for media in product.media limit: 5 %}
-              <button 
-                class="thumbnail-btn" 
-                data-media-id="{{ media.id }}"
-                style="border: none; background: none; cursor: pointer; padding: 0;"
-              >
-                <img 
-                  src="{{ media | image_url: width: 100 }}" 
-                  alt="{{ media.alt | escape }}"
-                  style="width: 80px; height: 80px; object-fit: cover; border-radius: 4px;"
-                >
-              </button>
-            {% endfor %}
-          </div>
-        {% endif %}
-      {% else %}
-        <div class="product-placeholder" style="background: #f4f4f4; aspect-ratio: 1; display: flex; align-items: center; justify-content: center;">
-          {{ 'product-1' | placeholder_svg_tag }}
-        </div>
-      {% endif %}
-    </div>
+  .product__media {
+    position: sticky;
+    top: 100px;
+    height: fit-content;
+  }
 
-    <!-- Product Info -->
-    <div class="product-info">
-      <h1 class="product-title" style="font-size: 2rem; margin-bottom: 0.5rem;">{{ product.title }}</h1>
-      
-      {% if product.vendor != blank %}
-        <p class="product-vendor" style="color: #666; margin-bottom: 0.5rem;">{{ product.vendor }}</p>
-      {% endif %}
+  .product__media-main {
+    width: 100%;
+    aspect-ratio: 1;
+    overflow: hidden;
+    border-radius: 8px;
+    background-color: rgba(var(--color-foreground), 0.05);
+    margin-bottom: 1rem;
+  }
 
-      <div class="product-price" style="font-size: 1.5rem; margin-bottom: 1rem;">
-        <span id="price-{{ section.id }}">
-          {% if product.compare_at_price > product.price %}
-            <span style="text-decoration: line-through; color: #999;">{{ product.compare_at_price | money }}</span>
-            <span style="color: var(--color-accent);">{{ product.price | money }}</span>
-          {% else %}
-            {{ product.price | money }}
-          {% endif %}
-        </span>
+  .product__media-main img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+  }
+
+  .product__media-main:hover img {
+    transform: scale(1.05);
+  }
+
+  .product__media-thumbnails {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .product__media-thumbnail {
+    width: 80px;
+    aspect-ratio: 1;
+    border-radius: 4px;
+    overflow: hidden;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: border-color 0.2s ease;
+  }
+
+  .product__media-thumbnail.active {
+    border-color: rgb(var(--color-accent-1));
+  }
+
+  .product__media-thumbnail img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .product__info {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .product__breadcrumbs {
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+    color: rgba(var(--color-foreground), 0.6);
+  }
+
+  .product__breadcrumbs a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .product__breadcrumbs a:hover {
+    text-decoration: underline;
+  }
+
+  .product__title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin: 0 0 0.5rem;
+    line-height: 1.2;
+  }
+
+  .product__vendor {
+    font-size: 0.9rem;
+    color: rgba(var(--color-foreground), 0.6);
+    margin-bottom: 1rem;
+  }
+
+  .product__price {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    font-size: 1.5rem;
+  }
+
+  .product__price-current {
+    font-weight: 600;
+    color: rgb(var(--color-accent-1));
+  }
+
+  .product__price-compare {
+    text-decoration: line-through;
+    opacity: 0.6;
+    font-size: 1.2rem;
+  }
+
+  .product__price-badge {
+    background-color: rgb(var(--color-accent-2));
+    color: #fff;
+    padding: 0.25rem 0.75rem;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: 600;
+  }
+
+  .product__reviews {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .product__reviews-stars {
+    display: flex;
+    color: #FFB800;
+  }
+
+  .product__reviews-count {
+    font-size: 0.9rem;
+    color: rgba(var(--color-foreground), 0.6);
+  }
+
+  .product__description {
+    margin-bottom: 2rem;
+    line-height: 1.7;
+  }
+
+  .product__description p {
+    margin-bottom: 1rem;
+  }
+
+  .product__form {
+    margin-bottom: 2rem;
+  }
+
+  .product__variants {
+    margin-bottom: 1.5rem;
+  }
+
+  .product__variant-label {
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+    display: block;
+  }
+
+  .product__variant-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .product__variant-button {
+    padding: 0.75rem 1.25rem;
+    border: 1px solid rgba(var(--color-foreground), 0.3);
+    border-radius: 4px;
+    background: transparent;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+  }
+
+  .product__variant-button:hover {
+    border-color: rgb(var(--color-foreground));
+  }
+
+  .product__variant-button.active {
+    border-color: rgb(var(--color-accent-1));
+    background-color: rgb(var(--color-accent-1));
+    color: rgb(var(--color-background));
+  }
+
+  .product__variant-button:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  .product__quantity {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .product__quantity-label {
+    font-weight: 600;
+  }
+
+  .product__quantity-selector {
+    display: flex;
+    align-items: center;
+    border: 1px solid rgba(var(--color-foreground), 0.3);
+    border-radius: 4px;
+  }
+
+  .product__quantity-button {
+    width: 40px;
+    height: 40px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s ease;
+  }
+
+  .product__quantity-button:hover {
+    background-color: rgba(var(--color-foreground), 0.05);
+  }
+
+  .product__quantity-input {
+    width: 50px;
+    height: 40px;
+    border: none;
+    text-align: center;
+    font-size: 1rem;
+    font-weight: 600;
+  }
+
+  .product__quantity-input:focus {
+    outline: none;
+  }
+
+  .product__buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .product__add-to-cart {
+    width: 100%;
+    padding: 1rem 2rem;
+    background-color: rgb(var(--color-accent-1));
+    color: rgb(var(--color-accent-2));
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+
+  .product__add-to-cart:hover {
+    opacity: 0.9;
+  }
+
+  .product__add-to-cart:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .product__dynamic-checkout {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .shopify-payment-button__button {
+    width: 100%;
+    border-radius: 4px !important;
+    font-weight: 600 !important;
+  }
+
+  .product__meta {
+    border-top: 1px solid rgba(var(--color-foreground), 0.1);
+    padding-top: 1.5rem;
+    margin-top: 1.5rem;
+  }
+
+  .product__meta-item {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+  }
+
+  .product__meta-label {
+    font-weight: 600;
+    color: rgba(var(--color-foreground), 0.6);
+  }
+
+  .product__trust-badges {
+    display: flex;
+    gap: 1.5rem;
+    margin-top: 2rem;
+    padding: 1.5rem;
+    background-color: rgba(var(--color-foreground), 0.03);
+    border-radius: 8px;
+  }
+
+  .product__trust-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 0.5rem;
+  }
+
+  .product__trust-icon {
+    width: 32px;
+    height: 32px;
+    color: rgb(var(--color-accent-1));
+  }
+
+  .product__trust-text {
+    font-size: 0.8rem;
+    font-weight: 600;
+  }
+
+  .product__cross-sell {
+    margin-top: 4rem;
+    padding-top: 3rem;
+    border-top: 1px solid rgba(var(--color-foreground), 0.1);
+  }
+
+  .product__cross-sell-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 2rem;
+  }
+
+  .product__cross-sell-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 2rem;
+  }
+
+  @media screen and (max-width: 1024px) {
+    .product__container {
+      grid-template-columns: 1fr;
+      gap: 2rem;
+    }
+
+    .product__media {
+      position: static;
+    }
+
+    .product__cross-sell-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media screen and (max-width: 768px) {
+    .product {
+      padding: 2rem 1rem;
+    }
+
+    .product__title {
+      font-size: 1.75rem;
+    }
+
+    .product__trust-badges {
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+  }
+{%- endstyle -%}
+
+<div class="product">
+  <div class="product__container">
+    <div class="product__media">
+      <div class="product__media-main">
+        {% assign featured_image = product.selected_or_first_available_variant.featured_image | default: product.featured_image %}
+        <img src="{{ featured_image | image_url: width: 1000 }}" alt="{{ featured_image.alt | escape }}" loading="eager" id="MainImage">
       </div>
-
-      <!-- Variant Selector -->
-      {% unless product.has_only_default_variant %}
-        <div class="product-variants" style="margin-bottom: 1.5rem;">
-          {% for option in product.options_with_values %}
-            <div class="variant-option" style="margin-bottom: 1rem;">
-              <label style="display: block; margin-bottom: 0.5rem; font-weight: bold;">{{ option.name }}</label>
-              <div class="variant-buttons" style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-                {% for value in option.values %}
-                  <button
-                    type="button"
-                    class="variant-btn{% if option.selected_value == value %} active{% endif %}"
-                    data-option-name="{{ option.name }}"
-                    data-option-value="{{ value | escape }}"
-                    style="padding: 0.75rem 1rem; border: 1px solid #ddd; background: white; cursor: pointer; border-radius: 4px;"
-                  >
-                    {{ value }}
-                  </button>
-                {% endfor %}
-              </div>
+      
+      {% if product.media_count > 1 %}
+        <div class="product__media-thumbnails">
+          {% for media in product.media limit: 4 %}
+            <div class="product__media-thumbnail{% if forloop.first %} active{% endif %}" data-media-id="{{ media.id }}">
+              <img src="{{ media | image_url: width: 200 }}" alt="{{ media.alt | escape }}" loading="lazy">
             </div>
           {% endfor %}
         </div>
-      {% endunless %}
+      {% endif %}
+    </div>
 
-      <!-- Quantity Selector -->
-      <div class="product-quantity" style="margin-bottom: 1.5rem;">
-        <label style="display: block; margin-bottom: 0.5rem; font-weight: bold;">Quantity</label>
-        <div class="quantity-selector" style="display: flex; align-items: center; gap: 0.5rem;">
-          <button type="button" class="qty-minus" style="width: 40px; height: 40px; border: 1px solid #ddd; background: white; cursor: pointer; font-size: 1.25rem;">-</button>
-          <input 
-            type="number" 
-            name="quantity" 
-            value="1" 
-            min="1" 
-            class="qty-input"
-            style="width: 60px; text-align: center; padding: 0.5rem; border: 1px solid #ddd;"
-          >
-          <button type="button" class="qty-plus" style="width: 40px; height: 40px; border: 1px solid #ddd; background: white; cursor: pointer; font-size: 1.25rem;">+</button>
-        </div>
-      </div>
+    <div class="product__info">
+      {% render 'breadcrumbs', product: product %}
 
-      <!-- Subscription Widget -->
-      {% if section.settings.show_subscription %}
-        {% render 'subscription-widget', product: product %}
+      <h1 class="product__title">{{ product.title }}</h1>
+      
+      {% if product.vendor != blank %}
+        <p class="product__vendor">{{ product.vendor }}</p>
       {% endif %}
 
-      <!-- Add to Cart Form -->
-      <form action="{{ routes.cart_add_url }}" method="post" enctype="multipart/form-data" id="{{ product_form_id }}" class="product-form">
-        <input type="hidden" name="id" value="{{ current_variant.id }}">
-        
-        <button 
-          type="submit" 
-          class="add-to-cart-btn button" 
-          style="width: 100%; margin-bottom: 1rem;"
-          {% unless current_variant.available %}disabled{% endunless %}
-        >
-          {% if current_variant.available %}
-            Add to Cart
-          {% else %}
-            Sold Out
-          {% endif %}
-        </button>
-
-        <!-- Dynamic Checkout Buttons -->
-        {{ form | payment_button }}
-      </form>
-
-      <!-- Trust Badges -->
-      <div class="trust-badges" style="display: flex; gap: 1rem; margin-top: 1.5rem; flex-wrap: wrap;">
-        <div class="trust-badge" style="display: flex; align-items: center; gap: 0.5rem;">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 2L3 7v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-9-5z"/></svg>
-          <span>Secure Checkout</span>
-        </div>
-        <div class="trust-badge" style="display: flex; align-items: center; gap: 0.5rem;">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
-          <span>Free Returns</span>
-        </div>
-        <div class="trust-badge" style="display: flex; align-items: center; gap: 0.5rem;">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
-          <span>Fast Shipping</span>
-        </div>
-      </div>
-
-      <!-- Product Description -->
-      {% if product.description != blank %}
-        <div class="product-description" style="margin-top: 2rem; padding-top: 2rem; border-top: 1px solid #eee;">
-          <h3 style="margin-bottom: 1rem;">Description</h3>
-          {{ product.description }}
-        </div>
-      {% endif %}
-
-      <!-- Product Meta -->
-      <div class="product-meta" style="margin-top: 1.5rem; color: #666; font-size: 0.875rem;">
-        {% if product.type != blank %}
-          <p>Type: <a href="{{ product.type | url_for_type }}">{{ product.type }}</a></p>
+      <div class="product__price">
+        <span class="product__price-current" id="ProductPrice">
+          {{ product.selected_or_first_available_variant.price | money }}
+        </span>
+        {% if product.selected_or_first_available_variant.compare_at_price > product.selected_or_first_available_variant.price %}
+          <span class="product__price-compare">{{ product.selected_or_first_available_variant.compare_at_price | money }}</span>
+          <span class="product__price-badge">
+            {{ product.selected_or_first_available_variant.compare_at_price | minus: product.selected_or_first_available_variant.price | times: 100 | divided_by: product.selected_or_first_available_variant.compare_at_price }}% OFF
+          </span>
         {% endif %}
-        {% if product.tags.size > 0 %}
-          <p>Tags: 
-            {% for tag in product.tags %}
-              <a href="{{ tag | url_for_tag }}">{{ tag }}</a>{% unless forloop.last %}, {% endunless %}
+      </div>
+
+      {% if settings.show_reviews %}
+        <div class="product__reviews">
+          <div class="product__reviews-stars" id="ProductStars">
+            {% for i in (1..5) %}
+              <svg width="16" height="16" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
             {% endfor %}
-          </p>
+          </div>
+          <span class="product__reviews-count">
+            <a href="#product-reviews">{{ product.metafields.reviews.rating_count }} reviews</a>
+          </span>
+        </div>
+      {% endif %}
+
+      <div class="product__description">
+        {{ product.description }}
+      </div>
+
+      {% form 'product', product, class: 'product__form' %}
+        <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+
+        {% unless product.has_only_default_variant %}
+          <div class="product__variants">
+            {% for option in product.options_with_values %}
+              <div class="product__variant-group">
+                <label class="product__variant-label">{{ option.name }}</label>
+                <div class="product__variant-options">
+                  {% for value in option.values %}
+                    <button 
+                      type="button" 
+                      class="product__variant-button{% if option.selected_value == value %} active{% endif %}"
+                      data-option-name="{{ option.name }}"
+                      data-option-value="{{ value }}"
+                      {% unless product.variants | map: 'option1' | where: value | first %}disabled{% endunless %}
+                    >
+                      {{ value }}
+                    </button>
+                  {% endfor %}
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+        {% endunless %}
+
+        <div class="product__quantity">
+          <label class="product__quantity-label" for="Quantity">Quantity</label>
+          <div class="product__quantity-selector">
+            <button type="button" class="product__quantity-button" id="QuantityMinus">−</button>
+            <input type="number" id="Quantity" name="quantity" value="1" min="1" class="product__quantity-input">
+            <button type="button" class="product__quantity-button" id="QuantityPlus">+</button>
+          </div>
+        </div>
+
+        <div class="product__buttons">
+          <button type="submit" name="add" class="product__add-to-cart" id="AddToCart" {% unless product.selected_or_first_available_variant.available %}disabled{% endunless %}>
+            <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
+            </svg>
+            {% if product.selected_or_first_available_variant.available %}
+              {{ 'products.product.add_to_cart' | t }}
+            {% else %}
+              {{ 'products.product.sold_out' | t }}
+            {% endif %}
+          </button>
+
+          {% if product.selected_or_first_available_variant.available %}
+            <div class="product__dynamic-checkout">
+              {{ form | payment_button }}
+            </div>
+          {% endif %}
+        </div>
+      {% endform %}
+
+      <div class="product__meta">
+        {% if product.type != blank %}
+          <div class="product__meta-item">
+            <span class="product__meta-label">Type:</span>
+            <span>{{ product.type }}</span>
+          </div>
+        {% endif %}
+        
+        {% if product.tags.size > 0 %}
+          <div class="product__meta-item">
+            <span class="product__meta-label">Tags:</span>
+            <span>{{ product.tags | join: ', ' }}</span>
+          </div>
+        {% endif %}
+
+        {% if product.selected_or_first_available_variant.sku != blank %}
+          <div class="product__meta-item">
+            <span class="product__meta-label">SKU:</span>
+            <span>{{ product.selected_or_first_available_variant.sku }}</span>
+          </div>
         {% endif %}
       </div>
 
-      <!-- Reviews -->
-      {% if section.settings.show_reviews %}
-        <div class="product-reviews" style="margin-top: 2rem; padding-top: 2rem; border-top: 1px solid #eee;">
-          <div id="judgeme_product_reviews_widget_span" data-sku="{{ product.selected_or_first_available_variant.sku }}" data-shop="{{ shop.domain }}"></div>
+      <div class="product__trust-badges">
+        <div class="product__trust-item">
+          <svg class="product__trust-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+          </svg>
+          <span class="product__trust-text">Secure Checkout</span>
         </div>
-      {% endif %}
+        <div class="product__trust-item">
+          <svg class="product__trust-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+          </svg>
+          <span class="product__trust-text">Free Returns</span>
+        </div>
+        <div class="product__trust-item">
+          <svg class="product__trust-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+          </svg>
+          <span class="product__trust-text">Fast Shipping</span>
+        </div>
+      </div>
     </div>
   </div>
 
-  <!-- Cross-Sell Products -->
-  {% if section.settings.show_cross_sell and recommendations.products_count > 0 %}
-    <section class="cross-sell" style="margin-top: 3rem; padding: 2rem 0; border-top: 1px solid #eee;">
-      <h2 style="text-align: center; margin-bottom: 2rem;">You May Also Like</h2>
-      <div class="product-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 1.5rem;">
-        {% for recommendation in recommendations.products limit: section.settings.cross_sell_limit %}
-          {% render 'product-card', product: recommendation %}
+  {% if section.settings.show_cross_sell %}
+    <div class="product__cross-sell">
+      <h2 class="product__cross-sell-title">You May Also Like</h2>
+      <div class="product__cross-sell-grid">
+        {% assign cross_sell_products = section.settings.cross_sell_collection.products | limit: 4 %}
+        {% for product in cross_sell_products %}
+          {% if product.id != current_product.id %}
+            {% render 'product-card', product: product %}
+          {% endif %}
         {% endfor %}
       </div>
-    </section>
+    </div>
   {% endif %}
 </div>
 
 <script>
   document.addEventListener('DOMContentLoaded', function() {
-    const productForm = document.getElementById('{{ product_form_id }}');
-    const variantButtons = document.querySelectorAll('.variant-btn');
-    const qtyMinus = document.querySelector('.qty-minus');
-    const qtyPlus = document.querySelector('.qty-plus');
-    const qtyInput = document.querySelector('.qty-input');
+    // Quantity selector
+    const quantityInput = document.getElementById('Quantity');
+    const quantityMinus = document.getElementById('QuantityMinus');
+    const quantityPlus = document.getElementById('QuantityPlus');
+
+    if (quantityMinus && quantityInput) {
+      quantityMinus.addEventListener('click', function() {
+        const currentValue = parseInt(quantityInput.value);
+        if (currentValue > 1) {
+          quantityInput.value = currentValue - 1;
+        }
+      });
+    }
+
+    if (quantityPlus && quantityInput) {
+      quantityPlus.addEventListener('click', function() {
+        const currentValue = parseInt(quantityInput.value);
+        quantityInput.value = currentValue + 1;
+      });
+    }
 
     // Variant selection
+    const variantButtons = document.querySelectorAll('.product__variant-button');
     variantButtons.forEach(button => {
       button.addEventListener('click', function() {
         const optionName = this.dataset.optionName;
         const optionValue = this.dataset.optionValue;
         
         // Update active state
-        const siblings = this.parentElement.querySelectorAll('.variant-btn');
+        const siblings = this.parentElement.querySelectorAll('.product__variant-button');
         siblings.forEach(btn => btn.classList.remove('active'));
         this.classList.add('active');
+
+        // Update hidden input with variant ID
+        const variantId = this.closest('form').querySelector(`input[name="id"]`);
+        // In production, you'd fetch the correct variant ID based on all selected options
+      });
+    });
+
+    // Media thumbnails
+    const thumbnails = document.querySelectorAll('.product__media-thumbnail');
+    const mainImage = document.getElementById('MainImage');
+    
+    thumbnails.forEach(thumb => {
+      thumb.addEventListener('click', function() {
+        thumbnails.forEach(t => t.classList.remove('active'));
+        this.classList.add('active');
         
-        // Update hidden input with selected variant ID
-        // This would need to be connected to your variant logic
+        const img = this.querySelector('img');
+        if (mainImage && img) {
+          mainImage.src = img.src.replace('200x', '1000x');
+        }
       });
     });
 
-    // Quantity controls
-    qtyMinus.addEventListener('click', function() {
-      const currentValue = parseInt(qtyInput.value);
-      if (currentValue > 1) {
-        qtyInput.value = currentValue - 1;
-      }
-    });
+    // Add to cart AJAX
+    const addToCartForm = document.querySelector('.product__form');
+    const addToCartButton = document.getElementById('AddToCart');
 
-    qtyPlus.addEventListener('click', function() {
-      const currentValue = parseInt(qtyInput.value);
-      qtyInput.value = currentValue + 1;
-    });
+    if (addToCartForm && addToCartButton) {
+      addToCartForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const formData = new FormData(this);
+        const originalText = addToCartButton.innerHTML;
+        
+        addToCartButton.disabled = true;
+        addToCartButton.innerHTML = '<span class="loading">Adding...</span>';
 
-    // AJAX add to cart
-    productForm.addEventListener('submit', function(e) {
-      e.preventDefault();
-      
-      const formData = new FormData(productForm);
-      
-      fetch(window.routes.cart_add_url, {
-        method: 'POST',
-        body: formData,
-        headers: {
-          'X-Requested-With': 'XMLHttpRequest'
+        try {
+          const response = await fetch(window.routes.cart_add_url, {
+            method: 'POST',
+            body: formData
+          });
+
+          const data = await response.json();
+
+          if (response.ok) {
+            // Update cart count
+            const event = new CustomEvent('cart:update', { detail: { count: data.item_count } });
+            document.dispatchEvent(event);
+
+            // Open cart drawer
+            const cartDrawer = document.querySelector('.cart-drawer');
+            if (cartDrawer) {
+              cartDrawer.classList.add('cart-drawer--open');
+              document.body.style.overflow = 'hidden';
+            }
+
+            addToCartButton.innerHTML = '<span>Added!</span>';
+            setTimeout(() => {
+              addToCartButton.disabled = false;
+              addToCartButton.innerHTML = originalText;
+            }, 1000);
+          } else {
+            throw new Error(data.description || 'Failed to add to cart');
+          }
+        } catch (error) {
+          console.error('Error:', error);
+          addToCartButton.disabled = false;
+          addToCartButton.innerHTML = originalText;
+          alert(window.cartStrings.error);
         }
-      })
-      .then(response => response.json())
-      .then(data => {
-        if (data.status === 'ok') {
-          // Open cart drawer
-          document.querySelector('[data-cart-drawer]').classList.add('is-open');
-          // Update cart count
-          updateCartCount();
-        } else {
-          alert(data.description || 'Error adding to cart');
-        }
-      })
-      .catch(error => {
-        console.error('Error:', error);
-        alert('Error adding to cart');
       });
-    });
+    }
   });
-
-  function updateCartCount() {
-    fetch('/cart.js')
-      .then(response => response.json())
-      .then(cart => {
-        document.querySelectorAll('.cart-count').forEach(el => {
-          el.textContent = cart.item_count;
-        });
-      });
-  }
 </script>
+
+{% schema %}
+{
+  "name": "Product information",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_cross_sell",
+      "label": "Show cross-sell products",
+      "default": true
+    },
+    {
+      "type": "collection",
+      "id": "cross_sell_collection",
+      "label": "Cross-sell collection"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_subscription",
+      "label": "Show subscription options",
+      "default": true
+    }
+  ]
+}
+{% endschema %}

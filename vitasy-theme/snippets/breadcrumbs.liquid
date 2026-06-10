@@ -1,46 +1,54 @@
-{%- liquid
-  assign current = collection | default: product | default: page
--%}
-
-<nav class="breadcrumbs" aria-label="Breadcrumb" style="margin-bottom: 1.5rem; font-size: 0.875rem;">
-  <ol class="breadcrumb-list" style="display: flex; gap: 0.5rem; list-style: none; padding: 0; margin: 0; flex-wrap: wrap;">
-    <li class="breadcrumb-item">
-      <a href="/" style="color: #666; text-decoration: none;">Home</a>
+<nav class="breadcrumbs" aria-label="Breadcrumbs">
+  <ol class="breadcrumbs__list" style="display:flex;gap:0.5rem;list-style:none;padding:0;margin:0;font-size:0.9rem;">
+    <li class="breadcrumbs__item">
+      <a href="{{ routes.root_url }}" class="breadcrumbs__link" style="color:inherit;text-decoration:none;">
+        {{ 'general.breadcrumbs.home' | t }}
+      </a>
     </li>
     
-    {%- if collection -%}
-      {% if collection.handle != blank and collection.handle != 'all' %}
-        <li class="breadcrumb-separator" style="color: #999;">/</li>
-        <li class="breadcrumb-item">
-          <a href="/collections/all" style="color: #666; text-decoration: none;">Collections</a>
-        </li>
-        <li class="breadcrumb-separator" style="color: #999;">/</li>
-        <li class="breadcrumb-item">
-          <span style="color: var(--color-text);">{{ collection.title }}</span>
-        </li>
-      {% endif %}
-    {%- elsif product -%}
-      <li class="breadcrumb-separator" style="color: #999;">/</li>
-      <li class="breadcrumb-item">
-        <a href="/collections/all" style="color: #666; text-decoration: none;">Products</a>
+    {% if collection %}
+      <li class="breadcrumbs__separator" style="opacity:0.5;">/</li>
+      <li class="breadcrumbs__item">
+        <a href="{{ collection.url }}" class="breadcrumbs__link" style="color:inherit;text-decoration:none;">
+          {{ collection.title }}
+        </a>
       </li>
-      {% if product.collections.size > 0 %}
-        {% for collection in product.collections limit: 1 %}
-          <li class="breadcrumb-separator" style="color: #999;">/</li>
-          <li class="breadcrumb-item">
-            <a href="{{ collection.url }}" style="color: #666; text-decoration: none;">{{ collection.title }}</a>
-          </li>
-        {% endfor %}
-      {% endif %}
-      <li class="breadcrumb-separator" style="color: #999;">/</li>
-      <li class="breadcrumb-item">
-        <span style="color: var(--color-text);">{{ product.title }}</span>
+    {% endif %}
+    
+    {% if product %}
+      <li class="breadcrumbs__separator" style="opacity:0.5;">/</li>
+      <li class="breadcrumbs__item">
+        <span class="breadcrumbs__current" style="opacity:0.6;" aria-current="page">
+          {{ product.title }}
+        </span>
       </li>
-    {%- elsif page -%}
-      <li class="breadcrumb-separator" style="color: #999;">/</li>
-      <li class="breadcrumb-item">
-        <span style="color: var(--color-text);">{{ page.title }}</span>
+    {% endif %}
+    
+    {% if page %}
+      <li class="breadcrumbs__separator" style="opacity:0.5;">/</li>
+      <li class="breadcrumbs__item">
+        <span class="breadcrumbs__current" style="opacity:0.6;" aria-current="page">
+          {{ page.title }}
+        </span>
       </li>
-    {%- endif -%}
+    {% endif %}
+    
+    {% if search %}
+      <li class="breadcrumbs__separator" style="opacity:0.5;">/</li>
+      <li class="breadcrumbs__item">
+        <span class="breadcrumbs__current" style="opacity:0.6;" aria-current="page">
+          Search
+        </span>
+      </li>
+    {% endif %}
+    
+    {% if cart %}
+      <li class="breadcrumbs__separator" style="opacity:0.5;">/</li>
+      <li class="breadcrumbs__item">
+        <span class="breadcrumbs__current" style="opacity:0.6;" aria-current="page">
+          Cart
+        </span>
+      </li>
+    {% endif %}
   </ol>
 </nav>

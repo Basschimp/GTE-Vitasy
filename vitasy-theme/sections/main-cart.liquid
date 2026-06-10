@@ -1,199 +1,425 @@
-<div class="cart-page container" data-section-id="{{ section.id }}">
-  <h1 class="cart-title" style="font-size: 2rem; margin-bottom: 2rem;">Your Cart</h1>
+{%- style -%}
+  .cart-page {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 3rem 2rem;
+  }
 
+  .cart-page__title {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 2rem;
+  }
+
+  .cart-page__container {
+    display: grid;
+    grid-template-columns: 1fr 400px;
+    gap: 3rem;
+  }
+
+  .cart-page__items {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .cart-page__item {
+    display: grid;
+    grid-template-columns: 100px 1fr auto;
+    gap: 1.5rem;
+    padding: 1.5rem 0;
+    border-bottom: 1px solid rgba(var(--color-foreground), 0.1);
+  }
+
+  .cart-page__item-image {
+    width: 100px;
+    height: 100px;
+    border-radius: 8px;
+    overflow: hidden;
+    background-color: rgba(var(--color-foreground), 0.05);
+  }
+
+  .cart-page__item-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .cart-page__item-details {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .cart-page__item-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 0;
+  }
+
+  .cart-page__item-title a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .cart-page__item-variant {
+    font-size: 0.9rem;
+    color: rgba(var(--color-foreground), 0.6);
+  }
+
+  .cart-page__item-price {
+    font-weight: 600;
+    margin-top: 0.5rem;
+  }
+
+  .cart-page__item-quantity {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .cart-page__quantity-btn {
+    width: 36px;
+    height: 36px;
+    border: 1px solid rgba(var(--color-foreground), 0.3);
+    border-radius: 4px;
+    background: transparent;
+    cursor: pointer;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .cart-page__quantity-input {
+    width: 50px;
+    height: 36px;
+    border: 1px solid rgba(var(--color-foreground), 0.3);
+    border-radius: 4px;
+    text-align: center;
+    font-size: 0.95rem;
+    font-weight: 600;
+  }
+
+  .cart-page__item-remove {
+    background: transparent;
+    border: none;
+    color: rgba(var(--color-foreground), 0.6);
+    cursor: pointer;
+    font-size: 0.85rem;
+    padding: 0.5rem 0;
+    transition: color 0.2s ease;
+  }
+
+  .cart-page__item-remove:hover {
+    color: #ff4444;
+  }
+
+  .cart-page__note {
+    margin-top: 2rem;
+  }
+
+  .cart-page__note-label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+  }
+
+  .cart-page__note-textarea {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid rgba(var(--color-foreground), 0.3);
+    border-radius: 4px;
+    font-family: inherit;
+    font-size: 0.95rem;
+    resize: vertical;
+    min-height: 100px;
+  }
+
+  .cart-page__summary {
+    background-color: rgba(var(--color-foreground), 0.03);
+    padding: 2rem;
+    border-radius: 8px;
+    height: fit-content;
+  }
+
+  .cart-page__summary-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+  }
+
+  .cart-page__summary-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+    font-size: 0.95rem;
+  }
+
+  .cart-page__summary-total {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(var(--color-foreground), 0.1);
+    font-size: 1.25rem;
+    font-weight: 700;
+  }
+
+  .cart-page__checkout-btn {
+    width: 100%;
+    padding: 1rem;
+    background-color: rgb(var(--color-accent-1));
+    color: rgb(var(--color-accent-2));
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 1.5rem;
+    transition: opacity 0.2s ease;
+  }
+
+  .cart-page__checkout-btn:hover {
+    opacity: 0.9;
+  }
+
+  .cart-page__trust {
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(var(--color-foreground), 0.1);
+  }
+
+  .cart-page__trust-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+    color: rgba(var(--color-foreground), 0.6);
+    margin-bottom: 0.5rem;
+  }
+
+  .cart-page__upsell {
+    margin-top: 4rem;
+    padding-top: 3rem;
+    border-top: 1px solid rgba(var(--color-foreground), 0.1);
+  }
+
+  .cart-page__upsell-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 2rem;
+  }
+
+  .cart-page__upsell-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 2rem;
+  }
+
+  .cart-page__empty {
+    text-align: center;
+    padding: 4rem 0;
+  }
+
+  .cart-page__empty-icon {
+    width: 80px;
+    height: 80px;
+    color: rgba(var(--color-foreground), 0.3);
+    margin: 0 auto 1.5rem;
+  }
+
+  .cart-page__continue-shopping {
+    display: inline-block;
+    padding: 0.75rem 1.5rem;
+    background-color: rgb(var(--color-accent-1));
+    color: rgb(var(--color-accent-2));
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: 600;
+    margin-top: 1.5rem;
+  }
+
+  @media screen and (max-width: 900px) {
+    .cart-page__container {
+      grid-template-columns: 1fr;
+    }
+
+    .cart-page__summary {
+      order: -1;
+    }
+  }
+
+  @media screen and (max-width: 768px) {
+    .cart-page {
+      padding: 2rem 1rem;
+    }
+
+    .cart-page__item {
+      grid-template-columns: 80px 1fr;
+    }
+
+    .cart-page__item-actions {
+      grid-column: 2;
+    }
+
+    .cart-page__upsell-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+{%- endstyle -%}
+
+<div class="cart-page">
   {% if cart.item_count > 0 %}
-    <form action="{{ routes.cart_url }}" method="post" id="cart-form">
-      <div class="cart-items" style="margin-bottom: 2rem;">
-        <table class="cart-table" style="width: 100%; border-collapse: collapse;">
-          <thead>
-            <tr style="border-bottom: 1px solid #eee;">
-              <th style="text-align: left; padding: 1rem; width: 50%;">Product</th>
-              <th style="text-align: center; padding: 1rem;">Quantity</th>
-              <th style="text-align: right; padding: 1rem;">Total</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for item in cart.items %}
-              <tr class="cart-item" style="border-bottom: 1px solid #eee;">
-                <td style="padding: 1rem;">
-                  <div style="display: flex; gap: 1rem; align-items: center;">
-                    {% if item.image %}
-                      <img src="{{ item.image | image_url: width: 100 }}" alt="{{ item.title | escape }}" style="width: 80px; height: 80px; object-fit: cover; border-radius: 4px;">
-                    {% endif %}
-                    <div>
-                      <a href="{{ item.url }}" style="color: var(--color-text); text-decoration: none; font-weight: bold;">{{ item.product.title }}</a>
-                      {% if item.variant.title != 'Default Title' %}
-                        <p style="color: #666; font-size: 0.875rem; margin: 0.25rem 0 0 0;">{{ item.variant.title }}</p>
-                      {% endif %}
-                      <button type="button" class="remove-btn" data-line="{{ forloop.index }}" style="background: none; border: none; color: #ff4757; cursor: pointer; padding: 0; margin-top: 0.5rem; font-size: 0.875rem;">Remove</button>
-                    </div>
-                  </div>
-                </td>
-                <td style="padding: 1rem; text-align: center;">
-                  <div style="display: inline-flex; align-items: center; gap: 0.5rem;">
-                    <button type="button" class="qty-minus" data-line="{{ forloop.index }}" style="width: 32px; height: 32px; border: 1px solid #ddd; background: white; cursor: pointer;">-</button>
-                    <input 
-                      type="number" 
-                      name="updates[]" 
-                      value="{{ item.quantity }}" 
-                      min="0" 
-                      data-line="{{ forloop.index }}"
-                      style="width: 60px; text-align: center; padding: 0.5rem; border: 1px solid #ddd;"
-                    >
-                    <button type="button" class="qty-plus" data-line="{{ forloop.index }}" style="width: 32px; height: 32px; border: 1px solid #ddd; background: white; cursor: pointer;">+</button>
-                  </div>
-                </td>
-                <td style="padding: 1rem; text-align: right;">
-                  {{ item.final_line_price | money }}
-                  {% if item.original_line_price > item.final_line_price %}
-                    <span style="display: block; color: #999; text-decoration: line-through; font-size: 0.875rem;">{{ item.original_line_price | money }}</span>
-                  {% endif %}
-                </td>
-              </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-      </div>
+    <h1 class="cart-page__title">Your Cart ({{ cart.item_count }} items)</h1>
 
-      <!-- Order Notes -->
-      {% if section.settings.show_notes %}
-        <div class="cart-notes" style="margin-bottom: 2rem;">
-          <label for="cart-note" style="display: block; margin-bottom: 0.5rem; font-weight: bold;">Order notes</label>
-          <textarea 
-            id="cart-note" 
-            name="note" 
-            placeholder="Special instructions for your order" 
-            rows="3"
-            style="width: 100%; padding: 1rem; border: 1px solid #ddd; border-radius: 4px;"
-          >{{ cart.note }}</textarea>
-        </div>
-      {% endif %}
-
-      <div class="cart-footer" style="display: flex; justify-content: space-between; align-items: flex-start; gap: 2rem; flex-wrap: wrap;">
-        <div class="cart-actions" style="flex: 1;">
-          <a href="/collections/all" class="button" style="display: inline-block; background: #f4f4f4; color: var(--color-text);">Continue Shopping</a>
-        </div>
-
-        <div class="cart-summary" style="min-width: 300px; padding: 1.5rem; background: #f9f9f9; border-radius: 4px;">
-          <h3 style="margin-bottom: 1rem;">Order Summary</h3>
-          
-          <div class="summary-row" style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
-            <span>Subtotal</span>
-            <span>{{ cart.total_price | money }}</span>
-          </div>
-          
-          {% if section.settings.show_discounts and cart.total_discount > 0 %}
-            <div class="summary-row discount" style="display: flex; justify-content: space-between; margin-bottom: 0.5rem; color: #22c55e;">
-              <span>Discount</span>
-              <span>-{{ cart.total_discount | money }}</span>
+    <div class="cart-page__container">
+      <div class="cart-page__items">
+        {% for item in cart.items %}
+          <div class="cart-page__item" data-line-item="{{ forloop.index }}">
+            <div class="cart-page__item-image">
+              <img src="{{ item.image | image_url: width: 200 }}" alt="{{ item.title | escape }}" loading="lazy">
             </div>
-          {% endif %}
-          
-          <div class="summary-row total" style="display: flex; justify-content: space-between; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #ddd; font-weight: bold; font-size: 1.25rem;">
-            <span>Total</span>
-            <span>{{ cart.total_price | money }}</span>
-          </div>
-          
-          <p class="shipping-note" style="font-size: 0.875rem; color: #666; margin-top: 1rem;">
-            Shipping & taxes calculated at checkout
-          </p>
 
-          <!-- Free Shipping Progress -->
-          {% assign free_threshold = settings.cart_free_shipping_threshold | times: 100 %}
-          {% assign remaining = free_threshold | minus: cart.total_price %}
-          {% if remaining > 0 %}
-            <div class="free-shipping-progress" style="margin-top: 1rem;">
-              <p style="font-size: 0.875rem; color: #666; margin-bottom: 0.5rem;">
-                Add {{ remaining | money }} more for free shipping!
-              </p>
-              <div style="background: #eee; height: 8px; border-radius: 4px; overflow: hidden;">
-                <div style="background: var(--color-accent); height: 100%; width: {{ cart.total_price | times: 100.0 | divided_by: free_threshold }}%;"></div>
+            <div class="cart-page__item-details">
+              <h2 class="cart-page__item-title">
+                <a href="{{ item.url }}">{{ item.product.title }}</a>
+              </h2>
+              
+              {% unless item.variant.title contains 'Default' %}
+                <p class="cart-page__item-variant">{{ item.variant.title }}</p>
+              {% endunless %}
+
+              <p class="cart-page__item-price">{{ item.final_line_price | money }}</p>
+
+              <div class="cart-page__item-quantity">
+                <button class="cart-page__quantity-btn" data-quantity-minus data-index="{{ forloop.index }}">−</button>
+                <input type="number" class="cart-page__quantity-input" value="{{ item.quantity }}" min="1" data-quantity-input data-index="{{ forloop.index }}">
+                <button class="cart-page__quantity-btn" data-quantity-plus data-index="{{ forloop.index }}">+</button>
               </div>
-            </div>
-          {% else %}
-            <p style="font-size: 0.875rem; color: #22c55e; margin-top: 1rem;">
-              🎉 You've unlocked free shipping!
-            </p>
-          {% endif %}
 
-          <button type="submit" name="checkout" class="button" style="width: 100%; margin-top: 1.5rem;">Proceed to Checkout</button>
-          
-          <!-- Express Checkout -->
-          <div class="express-checkout" style="margin-top: 1rem;">
-            {{ content_for_additional_checkout_buttons }}
+              <button class="cart-page__item-remove" data-remove-item data-index="{{ forloop.index }}">Remove</button>
+            </div>
+          </div>
+        {% endfor %}
+
+        <div class="cart-page__note">
+          <label class="cart-page__note-label" for="CartNote">{{ 'general.cart.note' | t }}</label>
+          <textarea class="cart-page__note-textarea" id="CartNote" name="note">{{ cart.note }}</textarea>
+        </div>
+      </div>
+
+      <div class="cart-page__summary">
+        <h2 class="cart-page__summary-title">Order Summary</h2>
+        
+        <div class="cart-page__summary-row">
+          <span>Subtotal</span>
+          <span>{{ cart.total_price | money }}</span>
+        </div>
+
+        {% if cart.total_discount > 0 %}
+          <div class="cart-page__summary-row" style="color: #22c55e;">
+            <span>Discount</span>
+            <span>-{{ cart.total_discount | money }}</span>
+          </div>
+        {% endif %}
+
+        <p style="font-size: 0.85rem; color: rgba(var(--color-foreground), 0.6); margin: 1rem 0;">
+          {{ 'general.cart.shipping_calculated_at_checkout' | t }}
+        </p>
+
+        <div class="cart-page__summary-total">
+          <span>Total</span>
+          <span>{{ cart.total_price | money }}</span>
+        </div>
+
+        <button type="submit" name="checkout" class="cart-page__checkout-btn" form="CartForm">
+          {{ 'general.cart.checkout' | t }}
+        </button>
+
+        <div class="cart-page__trust">
+          <div class="cart-page__trust-item">
+            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+            </svg>
+            <span>Secure checkout</span>
+          </div>
+          <div class="cart-page__trust-item">
+            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+            </svg>
+            <span>Free returns</span>
           </div>
         </div>
       </div>
-    </form>
+    </div>
 
-    <!-- Upsell Products -->
     {% if section.settings.show_upsell %}
-      <section class="cart-upsell" style="margin-top: 3rem; padding-top: 2rem; border-top: 1px solid #eee;">
-        <h2 style="text-align: center; margin-bottom: 2rem;">You May Also Like</h2>
-        <div class="product-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 1.5rem;">
-          {% assign upsell_collection = collections['all'].products | limit: 4 %}
-          {% for product in upsell_collection %}
-            {% unless cart.contains_product_id == true %}
-              {% render 'product-card', product: product %}
-            {% endunless %}
+      <div class="cart-page__upsell">
+        <h2 class="cart-page__upsell-title">{{ 'sections.cart.upsell_title' | t }}</h2>
+        <div class="cart-page__upsell-grid">
+          {% assign upsell_products = section.settings.upsell_collection.products | limit: 4 %}
+          {% for product in upsell_products %}
+            {% render 'product-card', product: product %}
           {% endfor %}
         </div>
-      </section>
+      </div>
     {% endif %}
-
   {% else %}
-    <!-- Empty Cart State -->
-    <div class="cart-empty" style="text-align: center; padding: 4rem 2rem;">
-      <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="#ccc" style="margin-bottom: 1rem;">
-        <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+    <div class="cart-page__empty">
+      <svg class="cart-page__empty-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
       </svg>
-      <h2 style="font-size: 1.5rem; margin-bottom: 1rem;">Your cart is empty</h2>
-      <p style="color: #666; margin-bottom: 2rem;">Looks like you haven't added anything to your cart yet.</p>
-      <a href="/collections/all" class="button">Start Shopping</a>
+      <h1 class="cart-page__title">{{ 'general.cart.empty' | t }}</h1>
+      <p>Your cart is currently empty.</p>
+      <a href="{{ routes.all_products_collection_url }}" class="cart-page__continue-shopping">
+        {{ 'general.cart.continue_shopping' | t }}
+      </a>
     </div>
   {% endif %}
 </div>
 
+<form action="{{ routes.cart_url }}" method="post" id="CartForm" novalidate></form>
+
 <script>
-  document.addEventListener('DOMContentLoaded', function() {
-    const qtyInputs = document.querySelectorAll('.cart-item input[type="number"]');
-    const removeBtns = document.querySelectorAll('.remove-btn');
-    
-    // Quantity controls
-    document.querySelectorAll('.qty-minus').forEach(btn => {
-      btn.addEventListener('click', function() {
-        const line = this.dataset.line;
-        const input = document.querySelector(`input[data-line="${line}"]`);
-        if (parseInt(input.value) > 1) {
-          input.value = parseInt(input.value) - 1;
-          updateCart();
-        }
-      });
+  document.querySelectorAll('[data-quantity-minus]').forEach(btn => {
+    btn.addEventListener('click', async function() {
+      const index = this.dataset.index;
+      const input = document.querySelector(`[data-quantity-input][data-index="${index}"]`);
+      const newQty = parseInt(input.value) - 1;
+      if (newQty >= 1) await updateCart(index, newQty);
     });
-    
-    document.querySelectorAll('.qty-plus').forEach(btn => {
-      btn.addEventListener('click', function() {
-        const line = this.dataset.line;
-        const input = document.querySelector(`input[data-line="${line}"]`);
-        input.value = parseInt(input.value) + 1;
-        updateCart();
-      });
-    });
-    
-    // Remove items
-    removeBtns.forEach(btn => {
-      btn.addEventListener('click', function() {
-        const line = this.dataset.line;
-        const input = document.querySelector(`input[data-line="${line}"]`);
-        input.value = 0;
-        updateCart();
-      });
-    });
-    
-    function updateCart() {
-      document.getElementById('cart-form').submit();
-    }
   });
+
+  document.querySelectorAll('[data-quantity-plus]').forEach(btn => {
+    btn.addEventListener('click', async function() {
+      const index = this.dataset.index;
+      const input = document.querySelector(`[data-quantity-input][data-index="${index}"]`);
+      const newQty = parseInt(input.value) + 1;
+      await updateCart(index, newQty);
+    });
+  });
+
+  document.querySelectorAll('[data-remove-item]').forEach(btn => {
+    btn.addEventListener('click', async function() {
+      const index = this.dataset.index;
+      await updateCart(index, 0);
+    });
+  });
+
+  async function updateCart(line, quantity) {
+    const formData = new FormData();
+    formData.append('updates[]', quantity);
+    
+    try {
+      const response = await fetch(window.routes.cart_update_url, {
+        method: 'POST',
+        body: formData
+      });
+      if (response.ok) window.location.reload();
+    } catch (error) {
+      alert(window.cartStrings.error);
+    }
+  }
 </script>
 
 {% schema %}
@@ -207,16 +433,9 @@
       "default": true
     },
     {
-      "type": "checkbox",
-      "id": "show_notes",
-      "label": "Show order notes",
-      "default": true
-    },
-    {
-      "type": "checkbox",
-      "id": "show_discounts",
-      "label": "Show discounts",
-      "default": true
+      "type": "collection",
+      "id": "upsell_collection",
+      "label": "Upsell collection"
     }
   ]
 }

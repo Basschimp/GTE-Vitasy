@@ -1,52 +1,51 @@
-<div class="homepage container" data-section-id="{{ section.id }}">
-  <!-- Hero Section -->
-  <section class="hero" style="text-align: center; padding: 4rem 2rem; background: #f9f9f9; margin-bottom: 3rem;">
-    <h1 style="font-size: 3rem; margin-bottom: 1rem;">Welcome to Vitasy</h1>
-    <p style="font-size: 1.25rem; color: #666; max-width: 600px; margin: 0 auto 2rem;">
-      Discover our premium collection of products designed for your wellness journey.
-    </p>
-    <a href="/collections/all" class="button">Shop Now</a>
-  </section>
+{%- style -%}
+  .page {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 3rem 2rem;
+  }
 
-  <!-- Featured Collection -->
-  <section class="featured-collection" style="margin-bottom: 3rem;">
-    <h2 style="text-align: center; font-size: 2rem; margin-bottom: 2rem;">Featured Products</h2>
-    <div class="product-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 2rem;">
-      {% assign featured_collection = collections['all'].products | limit: 4 %}
-      {% for product in featured_collection %}
-        {% render 'product-card', product: product %}
-      {% endfor %}
-    </div>
-  </section>
+  .page__title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+  }
 
-  <!-- Trust Badges -->
-  <section class="trust-section" style="display: flex; justify-content: center; gap: 3rem; padding: 3rem 2rem; background: #f9f9f9; flex-wrap: wrap;">
-    <div class="trust-item" style="text-align: center;">
-      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" style="margin-bottom: 1rem;"><path d="M12 2L3 7v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-9-5z"/></svg>
-      <h3 style="margin-bottom: 0.5rem;">Secure Checkout</h3>
-      <p style="color: #666;">Your information is always protected</p>
-    </div>
-    <div class="trust-item" style="text-align: center;">
-      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" style="margin-bottom: 1rem;"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
-      <h3 style="margin-bottom: 0.5rem;">Fast Shipping</h3>
-      <p style="color: #666;">Free delivery on orders over $75</p>
-    </div>
-    <div class="trust-item" style="text-align: center;">
-      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" style="margin-bottom: 1rem;"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
-      <h3 style="margin-bottom: 0.5rem;">Easy Returns</h3>
-      <p style="color: #666;">30-day hassle-free returns</p>
-    </div>
-  </section>
+  .page__content {
+    line-height: 1.8;
+  }
+
+  .page__content img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    margin: 1.5rem 0;
+  }
+
+  @media screen and (max-width: 768px) {
+    .page {
+      padding: 2rem 1rem;
+    }
+
+    .page__title {
+      font-size: 1.75rem;
+    }
+  }
+{%- endstyle -%}
+
+<div class="page">
+  {% render 'breadcrumbs', page: page %}
+  
+  <h1 class="page__title">{{ page.title }}</h1>
+  
+  <div class="page__content">
+    {{ page.content }}
+  </div>
 </div>
 
 {% schema %}
 {
-  "name": "Homepage",
-  "settings": [],
-  "presets": [
-    {
-      "name": "Homepage"
-    }
-  ]
+  "name": "Page",
+  "settings": []
 }
 {% endschema %}

@@ -1,88 +1,73 @@
-{
-  "name": "Vitasy Theme",
-  "version": "1.0.0",
-  "documentation_url": "https://help.shopify.com/themes",
-  "support_url": "https://support.shopify.com",
-  "author": {
-    "name": "Vitasy",
-    "email": "support@vitasy.com"
+[
+  {
+    "name": "theme_info",
+    "theme_name": "Vitasy Theme",
+    "theme_version": "1.0.0",
+    "theme_author": "Vitasy",
+    "theme_documentation_url": "https://help.shopify.com",
+    "theme_support_url": "https://support.shopify.com"
   },
-  "license": "MIT",
-  "settings_schema": [
-    {
-      "name": "theme_info",
-      "theme_name": "Vitasy",
-      "theme_version": "1.0.0",
-      "theme_author": "Vitasy",
-      "theme_documentation_url": "https://help.shopify.com/themes",
-      "theme_support_url": "https://support.shopify.com"
-    },
-    {
-      "name": "Colors",
-      "settings": [
-        {
-          "type": "color",
-          "id": "colors_solid_button_labels",
-          "label": "Solid button label",
-          "default": "#FFFFFF"
-        },
-        {
-          "type": "color",
-          "id": "colors_accent_1",
-          "label": "Accent 1",
-          "default": "#121212"
-        },
-        {
-          "type": "color",
-          "id": "colors_background_1",
-          "label": "Background 1",
-          "default": "#FFFFFF"
-        },
-        {
-          "type": "color",
-          "id": "colors_text",
-          "label": "Text color",
-          "default": "#121212"
-        }
-      ]
-    },
-    {
-      "name": "Typography",
-      "settings": [
-        {
-          "type": "font_picker",
-          "id": "type_header_font",
-          "label": "Heading font",
-          "default": "assistant_n4"
-        },
-        {
-          "type": "font_picker",
-          "id": "type_body_font",
-          "label": "Body font",
-          "default": "assistant_n4"
-        }
-      ]
-    },
-    {
-      "name": "Cart",
-      "settings": [
-        {
-          "type": "checkbox",
-          "id": "cart_enable_drawer",
-          "label": "Enable cart drawer",
-          "default": true
-        },
-        {
-          "type": "range",
-          "id": "cart_free_shipping_threshold",
-          "label": "Free shipping threshold",
-          "min": 0,
-          "max": 500,
-          "step": 5,
-          "unit": "$",
-          "default": 75
-        }
-      ]
-    }
-  ]
-}
+  {
+    "name": "Colors",
+    "settings": [
+      {
+        "type": "color",
+        "id": "colors_solid_button_labels",
+        "label": "Solid button label",
+        "default": "#FFFFFF"
+      },
+      {
+        "type": "color",
+        "id": "colors_accent_1",
+        "label": "Accent 1",
+        "default": "#121212"
+      },
+      {
+        "type": "color",
+        "id": "colors_accent_2",
+        "label": "Accent 2",
+        "default": "#4A4A4A"
+      },
+      {
+        "type": "color",
+        "id": "background",
+        "label": "Background",
+        "default": "#FFFFFF"
+      },
+      {
+        "type": "color",
+        "id": "text",
+        "label": "Text",
+        "default": "#121212"
+      }
+    ]
+  },
+  {
+    "name": "Typography",
+    "settings": [
+      {
+        "type": "font_picker",
+        "id": "type_header_font",
+        "label": "Heading font",
+        "default": "assistant_n4"
+      },
+      {
+        "type": "font_picker",
+        "id": "type_body_font",
+        "label": "Body font",
+        "default": "assistant_n4"
+      }
+    ]
+  },
+  {
+    "name": "Favicon",
+    "settings": [
+      {
+        "type": "image_picker",
+        "id": "favicon",
+        "label": "Favicon image",
+        "info": "32 x 32px .png"
+      }
+    ]
+  }
+]

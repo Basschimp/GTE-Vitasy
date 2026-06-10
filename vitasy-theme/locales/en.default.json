@@ -1,20 +1,85 @@
 {
   "general": {
     "accessibility": {
-      "skip_to_text": "Skip to content"
-    }
-  },
-  "sections": {
+      "skip_to_text": "Skip to content",
+      "refresh_page": "Choosing a selection results in a full page refresh.",
+      "link_messages": {
+        "new_window": "Opens in a new window."
+      }
+    },
+    "meta": {
+      "tags": "Tagged \"{{ tags }}\"",
+      "page": "Page {{ page }}"
+    },
+    "breadcrumbs": {
+      "home": "Home"
+    },
+    "pagination": {
+      "next": "Next",
+      "previous": "Previous"
+    },
+    "search": {
+      "no_results": "No results found for \"{{ terms }}\". Check the spelling or use a different word or phrase.",
+      "results_with_count": {
+        "one": "{{ count }} result for \"{{ terms }}\"",
+        "other": "{{ count }} results for \"{{ terms }}\""
+      },
+      "title": "Search results",
+      "placeholder": "Search our store"
+    },
     "cart": {
-      "cart_error": "There was an error while updating your cart. Please try again.",
-      "quantity_error": "You can only add [quantity] of this item to your cart."
+      "view": "View cart",
+      "add": "Add to cart",
+      "remove": "Remove",
+      "empty": "Your cart is empty",
+      "quantity": "Quantity",
+      "total": "Total",
+      "update": "Update",
+      "checkout": "Check out",
+      "continue_shopping": "Continue shopping",
+      "note": "Order notes",
+      "shipping_calculated_at_checkout": "Shipping & taxes calculated at checkout",
+      "free_shipping_threshold": "You're {{ amount }} away from free shipping!",
+      "free_shipping_unlocked": "Congratulations! You've unlocked free shipping!"
     }
   },
   "products": {
     "product": {
-      "add_to_cart": "Add to Cart",
-      "sold_out": "Sold Out",
-      "quantity": "Quantity"
+      "add_to_cart": "Add to cart",
+      "sold_out": "Sold out",
+      "unavailable": "Unavailable",
+      "on_sale": "Sale",
+      "regular_price": "Regular price",
+      "sale_price": "Sale price",
+      "quantity": "Quantity",
+      "share": "Share",
+      "reviews": "Reviews",
+      "subscription": {
+        "one_time": "One-time purchase",
+        "subscribe": "Subscribe & save",
+        "save_percentage": "Save {{ percentage }}%"
+      }
     }
+  },
+  "sections": {
+    "header": {
+      "menu": "Menu",
+      "cart": "Cart"
+    },
+    "footer": {
+      "copyright": "© {{ year }} {{ shop.name }}. All rights reserved."
+    },
+    "cart": {
+      "cart_error": "There was an error while updating your cart. Please try again.",
+      "quantity_error": "You can only add [quantity] of this item to your cart.",
+      "upsell_title": "You may also like"
+    }
+  },
+  "accessibility": {
+    "skip_to_text": "Skip to content",
+    "refresh_page": "Choosing a selection results in a full page refresh.",
+    "close": "Close",
+    "open": "Open",
+    "loading": "Loading..."
   }
 }
