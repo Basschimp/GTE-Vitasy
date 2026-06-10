@@ -1,13 +1,9 @@
-{%- comment -%}
-  Homepage Template
-  VITASY Shopify 2.0 Theme
-{%- endcomment -%}
-
-{{ content_for_index }}
-
-{% schema %}
 {
-  "name": "Homepage",
-  "settings": []
+  "sections": {
+    "main": {
+      "type": "main-page",
+      "settings": {}
+    }
+  },
+  "order": ["main"]
 }
-{% endschema %}
