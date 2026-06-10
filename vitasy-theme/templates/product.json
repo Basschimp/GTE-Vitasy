@@ -2,7 +2,11 @@
   "sections": {
     "main": {
       "type": "main-product",
-      "settings": {}
+      "settings": {
+        "show_subscription": true,
+        "show_reviews": true,
+        "show_cross_sell": true
+      }
     }
   },
   "order": ["main"]

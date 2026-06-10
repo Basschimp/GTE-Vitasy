@@ -1,71 +1,44 @@
-{%- comment -%}
-  Pagination Snippet
-  Renders pagination for collections and blogs
-  Accepts: paginate (object) - Paginate object from Shopify
-{%- endcomment -%}
+{%- liquid
+  assign total_pages = paginate.pages
+  assign current_page = paginate.current_page
+-%}
 
-{%- if paginate.pages > 1 -%}
-  <nav class="pagination" role="navigation" aria-label="Pagination">
-    {%- if paginate.previous -%}
-      <a 
-        href="{{ paginate.previous.url }}" 
-        class="pagination__item"
-        aria-label="Previous page"
-      >
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <polyline points="15 18 9 12 15 6"></polyline>
-        </svg>
-      </a>
-    {%- else -%}
-      <span class="pagination__item pagination__item--disabled" aria-hidden="true">
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <polyline points="15 18 9 12 15 6"></polyline>
-        </svg>
-      </span>
-    {%- endif -%}
-    
-    {%- for part in paginate.parts -%}
-      {%- if part.is_link -%}
-        <a 
-          href="{{ part.url }}" 
-          class="pagination__item"
-          aria-label="Page {{ part.title }}"
-        >
-          {{ part.title }}
-        </a>
+{%- if total_pages > 1 -%}
+  <nav class="pagination" aria-label="Pagination" style="margin-top: 2rem;">
+    <ul class="pagination-list" style="display: flex; justify-content: center; gap: 0.5rem; list-style: none; padding: 0; margin: 0;">
+      {%- if paginate.previous -%}
+        <li class="pagination-item">
+          <a href="{{ paginate.previous.url }}" class="pagination-link" style="display: block; padding: 0.75rem 1rem; border: 1px solid #ddd; text-decoration: none; color: var(--color-text);">&laquo; Previous</a>
+        </li>
       {%- else -%}
-        {%- if part.title == paginate.current_page -%}
-          <span 
-            class="pagination__item pagination__item--active" 
-            aria-current="page"
-            aria-label="Page {{ part.title }}"
-          >
-            {{ part.title }}
-          </span>
-        {%- else -%}
-          <span class="pagination__item pagination__item--ellipsis" aria-hidden="true">
-            &hellip;
-          </span>
-        {%- endif -%}
+        <li class="pagination-item">
+          <span class="pagination-link disabled" style="display: block; padding: 0.75rem 1rem; border: 1px solid #eee; color: #ccc; cursor: not-allowed;">&laquo; Previous</span>
+        </li>
       {%- endif -%}
-    {%- endfor -%}
-    
-    {%- if paginate.next -%}
-      <a 
-        href="{{ paginate.next.url }}" 
-        class="pagination__item"
-        aria-label="Next page"
-      >
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <polyline points="9 18 15 12 9 6"></polyline>
-        </svg>
-      </a>
-    {%- else -%}
-      <span class="pagination__item pagination__item--disabled" aria-hidden="true">
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <polyline points="9 18 15 12 9 6"></polyline>
-        </svg>
-      </span>
-    {%- endif -%}
+
+      {%- for part in paginate.parts -%}
+        <li class="pagination-item">
+          {%- if part.is_link -%}
+            <a href="{{ part.url }}" class="pagination-link" style="display: block; padding: 0.75rem 1rem; border: 1px solid #ddd; text-decoration: none; color: var(--color-text);">{{ part.title }}</a>
+          {%- else -%}
+            {%- if part.title == current_page -%}
+              <span class="pagination-link active" style="display: block; padding: 0.75rem 1rem; border: 1px solid var(--color-accent); background: var(--color-accent); color: white; font-weight: bold;">{{ part.title }}</span>
+            {%- else -%}
+              <span class="pagination-link" style="display: block; padding: 0.75rem 1rem; border: 1px solid #eee; color: #999;">{{ part.title }}</span>
+            {%- endif -%}
+          {%- endif -%}
+        </li>
+      {%- endfor -%}
+
+      {%- if paginate.next -%}
+        <li class="pagination-item">
+          <a href="{{ paginate.next.url }}" class="pagination-link" style="display: block; padding: 0.75rem 1rem; border: 1px solid #ddd; text-decoration: none; color: var(--color-text);">Next &raquo;</a>
+        </li>
+      {%- else -%}
+        <li class="pagination-item">
+          <span class="pagination-link disabled" style="display: block; padding: 0.75rem 1rem; border: 1px solid #eee; color: #ccc; cursor: not-allowed;">Next &raquo;</span>
+        </li>
+      {%- endif -%}
+    </ul>
   </nav>
 {%- endif -%}

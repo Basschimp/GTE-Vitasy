@@ -1,0 +1,37 @@
+{
+  "default": {
+    "checkout": {
+      "background_color": "#ffffff",
+      "background_image": "",
+      "background_position": "top left",
+      "background_repeat": "no-repeat",
+      "button_color": "#121212",
+      "button_label_color": "#ffffff",
+      "content_background_color": "#ffffff",
+      "content_background_image": "",
+      "content_background_position": "top left",
+      "content_background_repeat": "no-repeat",
+      "error_color": "#ff6d6b",
+      "font": "Assistant",
+      "font_bold": "bold",
+      "heading_font": "Assistant",
+      "heading_size": "large",
+      "input_border_color": "#e8e8e8",
+      "input_border_thickness": "1px",
+      "input_content_font_size": "1rem",
+      "input_corner_radius": "0",
+      "input_label_color": "#333333",
+      "input_label_font_size": "0.875rem",
+      "logo_image": "",
+      "logo_position": "top-left",
+      "logo_size": "medium",
+      "primary_border_color": "#e8e8e8",
+      "primary_border_thickness": "1px",
+      "primary_text_color": "#121212",
+      "secondary_background_color": "#f4f4f4",
+      "secondary_text_color": "#666666",
+      "spacing_content": "small",
+      "spacing_sections": "small"
+    }
+  }
+}

@@ -1,192 +1,164 @@
-{%- comment -%}
-  Main Search Section
-  Renders search results for products, articles, and pages
-{%- endcomment -%}
+<div class="search-page container" data-section-id="{{ section.id }}">
+  <h1 class="search-title" style="font-size: 2rem; margin-bottom: 1rem;">Search Results</h1>
+  
+  <div class="search-form-wrapper" style="margin-bottom: 2rem;">
+    <form action="/search" method="get" role="search" style="display: flex; gap: 0.5rem; max-width: 600px;">
+      <input 
+        type="search" 
+        name="q" 
+        value="{{ search.terms | escape }}" 
+        placeholder="Search our store..." 
+        aria-label="Search"
+        style="flex: 1; padding: 1rem; border: 1px solid #ddd; border-radius: 4px; font-size: 1rem;"
+      >
+      <button type="submit" class="button" style="padding: 1rem 2rem;">Search</button>
+    </form>
+  </div>
 
-<div class="search-template">
-  <div class="container">
-    {%- render 'breadcrumbs', current: 'Search' -%}
+  {% if search.performed %}
+    <p class="results-count" style="margin-bottom: 2rem; color: #666;">
+      {{ search.results_count }} results for "{{ search.terms | escape }}"
+    </p>
 
-    <!-- Search Header -->
-    <div class="search-template__header" style="padding: var(--spacing-12) 0; text-align: center;">
-      <h1 class="search-template__title">Search</h1>
-
-      <form action="{{ routes.search_url }}" method="get" role="search" style="max-width: 600px; margin: var(--spacing-8) auto;">
-        <div style="display: flex; gap: var(--spacing-4);">
-          <input
-            type="search"
-            name="q"
-            value="{{ search.terms | escape }}"
-            placeholder="Search our store..."
-            aria-label="Search"
-            style="flex: 1; padding: var(--spacing-4) var(--spacing-6); border: 1px solid var(--color-border); border-radius: var(--radius-md); font-size: var(--text-base);"
-            autofocus
-          >
-          <button type="submit" class="btn btn--primary" style="white-space: nowrap;">
-            Search
-          </button>
-        </div>
-      </form>
+    <!-- Search Tabs -->
+    <div class="search-tabs" style="display: flex; gap: 1rem; border-bottom: 1px solid #eee; margin-bottom: 2rem;">
+      <button class="tab-btn active" data-tab="products" style="padding: 1rem; background: none; border: none; border-bottom: 2px solid var(--color-accent); cursor: pointer; font-weight: bold;">
+        Products ({{ search.results.products.size }})
+      </button>
+      {% if section.settings.show_articles %}
+        <button class="tab-btn" data-tab="articles" style="padding: 1rem; background: none; border: none; border-bottom: 2px solid transparent; cursor: pointer;">
+          Articles ({{ search.results.articles.size }})
+        </button>
+      {% endif %}
+      {% if section.settings.show_pages %}
+        <button class="tab-btn" data-tab="pages" style="padding: 1rem; background: none; border: none; border-bottom: 2px solid transparent; cursor: pointer;">
+          Pages ({{ search.results.pages.size }})
+        </button>
+      {% endif %}
     </div>
 
-    {%- if search.performed -%}
-      <!-- Search Results Count -->
-      <div class="search-template__results-info" style="margin-bottom: var(--spacing-8); padding: var(--spacing-4) 0; border-bottom: 1px solid var(--color-border);">
-        <p>
-          {%- if search.results_count == 0 -%}
-            No results found for "{{ search.terms }}". Try a different search term.
-          {%- else -%}
-            {{ search.results_count }} results for "{{ search.terms }}"
-          {%- endif -%}
-        </p>
-      </div>
-
-      <!-- Search Results Tabs -->
-      <div class="search-template__tabs" style="margin-bottom: var(--spacing-8);">
-        <div style="display: flex; gap: var(--spacing-6); border-bottom: 1px solid var(--color-border);">
-          <button 
-            class="search-tab active" 
-            data-tab="products"
-            style="padding: var(--spacing-4) 0; background: none; border: none; border-bottom: 2px solid var(--color-primary); color: var(--color-primary); cursor: pointer;"
-          >
-            Products ({{ search.products | size }})
-          </button>
-          <button 
-            class="search-tab" 
-            data-tab="articles"
-            style="padding: var(--spacing-4) 0; background: none; border: none; border-bottom: 2px solid transparent; cursor: pointer;"
-          >
-            Articles ({{ search.articles | size }})
-          </button>
-          <button 
-            class="search-tab" 
-            data-tab="pages"
-            style="padding: var(--spacing-4) 0; background: none; border: none; border-bottom: 2px solid transparent; cursor: pointer;"
-          >
-            Pages ({{ search.pages | size }})
-          </button>
+    <!-- Products Tab -->
+    <div class="tab-content active" id="products-tab">
+      {% if search.results.products.size > 0 %}
+        <div class="product-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 2rem;">
+          {% for item in search.results.products %}
+            {% render 'product-card', product: item %}
+          {% endfor %}
         </div>
-      </div>
+      {% else %}
+        <p class="no-results" style="text-align: center; padding: 3rem; color: #666;">
+          No products found matching your search.
+        </p>
+      {% endif %}
+    </div>
 
-      <!-- Product Results -->
-      <div id="products-tab" class="search-tab-content active">
-        {%- if search.products.size > 0 -%}
-          <div class="grid grid--cols-4">
-            {%- for product in search.products -%}
-              {%- render 'product-card', product: product -%}
-            {%- endfor -%}
-          </div>
-        {%- else -%}
-          <p style="padding: var(--spacing-8); text-align: center; color: var(--color-text);">No products found.</p>
-        {%- endif -%}
-      </div>
-
-      <!-- Article Results -->
-      <div id="articles-tab" class="search-tab-content">
-        {%- if search.articles.size > 0 -%}
-          <div style="display: grid; gap: var(--spacing-6);">
-            {%- for article in search.articles -%}
-              <article class="search-result-article" style="padding: var(--spacing-6); border: 1px solid var(--color-border); border-radius: var(--radius-md);">
-                {%- if article.image -%}
-                  <img 
-                    src="{{ article.image | image_url: width: 400 }}" 
-                    alt="{{ article.title }}"
-                    style="width: 100%; height: 200px; object-fit: cover; border-radius: var(--radius-md); margin-bottom: var(--spacing-4);"
-                    loading="lazy"
-                  >
-                {%- endif -%}
-                <h3 style="margin-bottom: var(--spacing-2);">
-                  <a href="{{ article.url }}" style="color: inherit; text-decoration: none;">{{ article.title }}</a>
-                </h3>
-                <p style="color: var(--color-text);">{{ article.excerpt_or_content | strip_html | truncate: 150 }}</p>
-                <a href="{{ article.url }}" class="btn btn--secondary" style="margin-top: var(--spacing-4); display: inline-block;">Read More</a>
+    <!-- Articles Tab -->
+    {% if section.settings.show_articles %}
+      <div class="tab-content" id="articles-tab" style="display: none;">
+        {% if search.results.articles.size > 0 %}
+          <div class="article-list">
+            {% for article in search.results.articles %}
+              <article class="article-card" style="display: flex; gap: 1.5rem; margin-bottom: 1.5rem; padding-bottom: 1.5rem; border-bottom: 1px solid #eee;">
+                {% if article.image %}
+                  <a href="{{ article.url }}" style="flex-shrink: 0;">
+                    <img src="{{ article.image | image_url: width: 200 }}" alt="{{ article.title | escape }}" style="width: 150px; height: 100px; object-fit: cover; border-radius: 4px;">
+                  </a>
+                {% endif %}
+                <div style="flex: 1;">
+                  <h3 style="margin-bottom: 0.5rem;">
+                    <a href="{{ article.url }}" style="color: var(--color-text); text-decoration: none;">{{ article.title }}</a>
+                  </h3>
+                  <p style="color: #666; font-size: 0.875rem; margin-bottom: 0.5rem;">
+                    {{ article.published_at | date: '%B %d, %Y' }}
+                  </p>
+                  <p style="color: #666;">{{ article.excerpt | strip_html | truncate: 150 }}</p>
+                </div>
               </article>
-            {%- endfor -%}
+            {% endfor %}
           </div>
-        {%- else -%}
-          <p style="padding: var(--spacing-8); text-align: center; color: var(--color-text);">No articles found.</p>
-        {%- endif -%}
+        {% else %}
+          <p class="no-results" style="text-align: center; padding: 3rem; color: #666;">
+            No articles found matching your search.
+          </p>
+        {% endif %}
       </div>
+    {% endif %}
 
-      <!-- Page Results -->
-      <div id="pages-tab" class="search-tab-content">
-        {%- if search.pages.size > 0 -%}
-          <div style="display: grid; gap: var(--spacing-4);">
-            {%- for page in search.pages -%}
-              <div class="search-result-page" style="padding: var(--spacing-6); border: 1px solid var(--color-border); border-radius: var(--radius-md);">
-                <h3 style="margin-bottom: var(--spacing-2);">
-                  <a href="{{ page.url }}" style="color: inherit; text-decoration: none;">{{ page.title }}</a>
+    <!-- Pages Tab -->
+    {% if section.settings.show_pages %}
+      <div class="tab-content" id="pages-tab" style="display: none;">
+        {% if search.results.pages.size > 0 %}
+          <div class="page-list">
+            {% for page in search.results.pages %}
+              <div class="page-card" style="margin-bottom: 1rem; padding-bottom: 1rem; border-bottom: 1px solid #eee;">
+                <h3 style="margin-bottom: 0.5rem;">
+                  <a href="{{ page.url }}" style="color: var(--color-text); text-decoration: none;">{{ page.title }}</a>
                 </h3>
-                <p style="color: var(--color-text);">{{ page.content | strip_html | truncate: 150 }}</p>
+                <p style="color: #666;">{{ page.content | strip_html | truncate: 150 }}</p>
               </div>
-            {%- endfor -%}
+            {% endfor %}
           </div>
-        {%- else -%}
-          <p style="padding: var(--spacing-8); text-align: center; color: var(--color-text);">No pages found.</p>
-        {%- endif -%}
+        {% else %}
+          <p class="no-results" style="text-align: center; padding: 3rem; color: #666;">
+            No pages found matching your search.
+          </p>
+        {% endif %}
       </div>
-
-      <!-- Pagination -->
-      {%- if paginate.pages > 1 -%}
-        {% render 'pagination', paginate: paginate %}
-      {%- endif -%}
-    {%- else -%}
-      <!-- Initial Search State -->
-      <div style="text-align: center; padding: var(--spacing-16); color: var(--color-text);">
-        <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" style="opacity: 0.3; margin-bottom: var(--spacing-6);">
-          <circle cx="11" cy="11" r="8"></circle>
-          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-        </svg>
-        <p>Start typing to search our products, articles, and pages.</p>
-      </div>
-    {%- endif -%}
-  </div>
+    {% endif %}
+  {% endif %}
 </div>
 
 <script>
-  // Search tabs functionality
-  document.querySelectorAll('.search-tab').forEach(tab => {
-    tab.addEventListener('click', function() {
-      const tabId = this.dataset.tab;
-      
-      // Update active tab button
-      document.querySelectorAll('.search-tab').forEach(t => {
-        t.classList.remove('active');
-        t.style.borderBottomColor = 'transparent';
-        t.style.color = 'inherit';
-      });
-      this.classList.add('active');
-      this.style.borderBottomColor = 'var(--color-primary)';
-      this.style.color = 'var(--color-primary)';
-      
-      // Show corresponding content
-      document.querySelectorAll('.search-tab-content').forEach(content => {
-        content.classList.remove('active');
-        content.style.display = 'none';
-      });
-      const activeContent = document.getElementById(tabId + '-tab');
-      if (activeContent) {
-        activeContent.classList.add('active');
-        activeContent.style.display = 'block';
-      }
-    });
-  });
-
-  // Initialize first tab as visible
   document.addEventListener('DOMContentLoaded', function() {
-    document.querySelectorAll('.search-tab-content').forEach((content, index) => {
-      if (index === 0) {
-        content.style.display = 'block';
-      } else {
-        content.style.display = 'none';
-      }
+    const tabBtns = document.querySelectorAll('.tab-btn');
+    const tabContents = document.querySelectorAll('.tab-content');
+
+    tabBtns.forEach(btn => {
+      btn.addEventListener('click', function() {
+        const tabId = this.dataset.tab;
+        
+        // Update active button
+        tabBtns.forEach(b => {
+          b.classList.remove('active');
+          b.style.borderBottomColor = 'transparent';
+          b.style.fontWeight = 'normal';
+        });
+        this.classList.add('active');
+        this.style.borderBottomColor = 'var(--color-accent)';
+        this.style.fontWeight = 'bold';
+        
+        // Show corresponding content
+        tabContents.forEach(content => {
+          content.style.display = 'none';
+        });
+        document.getElementById(tabId + '-tab').style.display = 'block';
+      });
     });
   });
 </script>
 
 {% schema %}
 {
-  "name": "Main Search",
-  "settings": []
+  "name": "Search page",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_products",
+      "label": "Show product results",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_articles",
+      "label": "Show article results",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_pages",
+      "label": "Show page results",
+      "default": true
+    }
+  ]
 }
 {% endschema %}

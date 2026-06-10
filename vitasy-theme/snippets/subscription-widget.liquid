@@ -1,73 +1,60 @@
-{%- comment -%}
-  Subscription Widget Snippet
-  Renders subscription options for products (Recharge integration)
-  Accepts: product (object) - Product object from Shopify
-{%- endcomment -%}
+{%- liquid
+  assign subscription_discount = 10
+-%}
 
-<div class="subscription-widget" data-subscription-widget>
-  <div class="subscription-widget__header">
-    <svg class="subscription-widget__icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-    </svg>
-    <h3 class="subscription-widget__title">Subscribe & Save {{ settings.subscription_discount }}%</h3>
-  </div>
+<div class="subscription-widget" style="border: 1px solid #ddd; border-radius: 4px; padding: 1rem; margin-bottom: 1.5rem;">
+  <h3 style="margin-bottom: 1rem; font-size: 1rem;">Choose how often</h3>
   
-  <div class="subscription-widget__options">
-    <!-- One-time Purchase -->
-    <label class="subscription-option" data-subscription-option="onetime">
-      <input 
-        type="radio" 
-        name="subscription_option" 
-        value="onetime"
-        checked
-      >
-      <span class="subscription-option__label">
-        One-time purchase
-        <span class="subscription-option__price">{{ product.selected_or_first_available_variant.price | money }}</span>
-      </span>
-    </label>
-    
-    <!-- Subscription Option -->
-    <label class="subscription-option" data-subscription-option="subscribe">
-      <input 
-        type="radio" 
-        name="subscription_option" 
-        value="subscribe"
-      >
-      <span class="subscription-option__label">
-        Subscribe & Save
-        <span class="subscription-option__discount">{{ settings.subscription_discount }}% OFF</span>
-        <span class="subscription-option__price">
-          {{ product.selected_or_first_available_variant.price 
-            | times: settings.subscription_discount 
-            | divided_by: 100 
-            | minus: product.selected_or_first_available_variant.price 
-            | absolute 
-            | money 
-          }}
-        </span>
-      </span>
-    </label>
-  </div>
-  
-  {%- if settings.subscription_benefits != blank -%}
-    <div class="subscription-widget__benefits" style="margin-top: var(--spacing-4); font-size: var(--text-xs); color: var(--color-text);">
-      {{ settings.subscription_benefits }}
+  <label class="subscription-option" style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem; cursor: pointer;">
+    <input 
+      type="radio" 
+      name="selling_plan" 
+      value="one_time" 
+      checked
+      style="width: 18px; height: 18px;"
+    >
+    <div style="flex: 1;">
+      <span style="font-weight: bold;">One-time purchase</span>
+      <p style="margin: 0.25rem 0 0 0; color: #666; font-size: 0.875rem;">{{ product.price | money }}</p>
     </div>
-  {%- endif -%}
+  </label>
+  
+  <label class="subscription-option" style="display: flex; align-items: center; gap: 0.75rem; cursor: pointer;">
+    <input 
+      type="radio" 
+      name="selling_plan" 
+      value="subscribe"
+      style="width: 18px; height: 18px;"
+    >
+    <div style="flex: 1;">
+      <span style="font-weight: bold;">Subscribe & Save {{ subscription_discount }}%</span>
+      <p style="margin: 0.25rem 0 0 0; color: #666; font-size: 0.875rem;">{{ product.price | times: 0.9 | money }} every month</p>
+    </div>
+    <span class="save-badge" style="background: #22c55e; color: white; padding: 0.25rem 0.5rem; font-size: 0.75rem; border-radius: 2px;">Save {{ subscription_discount }}%</span>
+  </label>
+  
+  <p class="subscription-benefits" style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #eee; font-size: 0.875rem; color: #666;">
+    ✓ Skip or cancel anytime<br>
+    ✓ Free shipping on subscriptions<br>
+    ✓ Never run out of your essentials
+  </p>
 </div>
 
 <script>
-  // Subscription option toggle
-  document.querySelectorAll('[data-subscription-option]').forEach(option => {
-    option.addEventListener('click', function() {
-      document.querySelectorAll('[data-subscription-option]').forEach(o => {
-        o.classList.remove('subscription-option--selected');
+  document.addEventListener('DOMContentLoaded', function() {
+    const subscriptionOptions = document.querySelectorAll('input[name="selling_plan"]');
+    const variantInput = document.querySelector('input[name="id"]');
+    
+    subscriptionOptions.forEach(option => {
+      option.addEventListener('change', function() {
+        // Update selling plan based on selection
+        if (this.value === 'subscribe') {
+          // Apply subscription discount logic here
+          console.log('Subscription selected');
+        } else {
+          console.log('One-time purchase selected');
+        }
       });
-      this.classList.add('subscription-option--selected');
-      
-      const input = this.querySelector('input[type="radio"]');
-      if (input) input.checked = true;
     });
   });
 </script>

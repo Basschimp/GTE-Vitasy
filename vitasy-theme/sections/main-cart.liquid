@@ -1,335 +1,221 @@
-{%- comment -%}
-  Main Cart Section
-  Renders the cart page with items, order notes, upsell products, and checkout
-{%- endcomment -%}
+<div class="cart-page container" data-section-id="{{ section.id }}">
+  <h1 class="cart-title" style="font-size: 2rem; margin-bottom: 2rem;">Your Cart</h1>
 
-<div class="cart-template">
-  <div class="container">
-    {%- render 'breadcrumbs', current: 'Cart' -%}
+  {% if cart.item_count > 0 %}
+    <form action="{{ routes.cart_url }}" method="post" id="cart-form">
+      <div class="cart-items" style="margin-bottom: 2rem;">
+        <table class="cart-table" style="width: 100%; border-collapse: collapse;">
+          <thead>
+            <tr style="border-bottom: 1px solid #eee;">
+              <th style="text-align: left; padding: 1rem; width: 50%;">Product</th>
+              <th style="text-align: center; padding: 1rem;">Quantity</th>
+              <th style="text-align: right; padding: 1rem;">Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in cart.items %}
+              <tr class="cart-item" style="border-bottom: 1px solid #eee;">
+                <td style="padding: 1rem;">
+                  <div style="display: flex; gap: 1rem; align-items: center;">
+                    {% if item.image %}
+                      <img src="{{ item.image | image_url: width: 100 }}" alt="{{ item.title | escape }}" style="width: 80px; height: 80px; object-fit: cover; border-radius: 4px;">
+                    {% endif %}
+                    <div>
+                      <a href="{{ item.url }}" style="color: var(--color-text); text-decoration: none; font-weight: bold;">{{ item.product.title }}</a>
+                      {% if item.variant.title != 'Default Title' %}
+                        <p style="color: #666; font-size: 0.875rem; margin: 0.25rem 0 0 0;">{{ item.variant.title }}</p>
+                      {% endif %}
+                      <button type="button" class="remove-btn" data-line="{{ forloop.index }}" style="background: none; border: none; color: #ff4757; cursor: pointer; padding: 0; margin-top: 0.5rem; font-size: 0.875rem;">Remove</button>
+                    </div>
+                  </div>
+                </td>
+                <td style="padding: 1rem; text-align: center;">
+                  <div style="display: inline-flex; align-items: center; gap: 0.5rem;">
+                    <button type="button" class="qty-minus" data-line="{{ forloop.index }}" style="width: 32px; height: 32px; border: 1px solid #ddd; background: white; cursor: pointer;">-</button>
+                    <input 
+                      type="number" 
+                      name="updates[]" 
+                      value="{{ item.quantity }}" 
+                      min="0" 
+                      data-line="{{ forloop.index }}"
+                      style="width: 60px; text-align: center; padding: 0.5rem; border: 1px solid #ddd;"
+                    >
+                    <button type="button" class="qty-plus" data-line="{{ forloop.index }}" style="width: 32px; height: 32px; border: 1px solid #ddd; background: white; cursor: pointer;">+</button>
+                  </div>
+                </td>
+                <td style="padding: 1rem; text-align: right;">
+                  {{ item.final_line_price | money }}
+                  {% if item.original_line_price > item.final_line_price %}
+                    <span style="display: block; color: #999; text-decoration: line-through; font-size: 0.875rem;">{{ item.original_line_price | money }}</span>
+                  {% endif %}
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
 
-    <h1 class="cart-template__title" style="padding: var(--spacing-8) 0;">Your Cart</h1>
+      <!-- Order Notes -->
+      {% if section.settings.show_notes %}
+        <div class="cart-notes" style="margin-bottom: 2rem;">
+          <label for="cart-note" style="display: block; margin-bottom: 0.5rem; font-weight: bold;">Order notes</label>
+          <textarea 
+            id="cart-note" 
+            name="note" 
+            placeholder="Special instructions for your order" 
+            rows="3"
+            style="width: 100%; padding: 1rem; border: 1px solid #ddd; border-radius: 4px;"
+          >{{ cart.note }}</textarea>
+        </div>
+      {% endif %}
 
-    {%- if cart.item_count > 0 -%}
-      <div class="cart-template__grid" style="display: grid; grid-template-columns: 1fr 400px; gap: var(--spacing-12);">
-        <!-- Cart Items -->
-        <div class="cart-template__items">
-          <form action="{{ routes.cart_url }}" method="post" novalidate>
-            <table class="cart-items-table" style="width: 100%; border-collapse: collapse;">
-              <thead>
-                <tr style="border-bottom: 1px solid var(--color-border);">
-                  <th style="text-align: left; padding: var(--spacing-4) 0; font-weight: 600;">Product</th>
-                  <th style="text-align: center; padding: var(--spacing-4) 0; font-weight: 600;">Quantity</th>
-                  <th style="text-align: right; padding: var(--spacing-4) 0; font-weight: 600;">Total</th>
-                </tr>
-              </thead>
-              <tbody>
-                {%- for item in cart.items -%}
-                  <tr class="cart-item-row" data-line-item="{{ forloop.index }}">
-                    <td style="padding: var(--spacing-6) 0;">
-                      <div style="display: flex; gap: var(--spacing-4); align-items: center;">
-                        <img
-                          src="{{ item.image | image_url: width: 160 }}"
-                          alt="{{ item.title }}"
-                          style="width: 80px; height: 80px; object-fit: cover; border-radius: var(--radius-md);"
-                          loading="lazy"
-                        >
-                        <div>
-                          <h3 class="cart-item__title" style="margin-bottom: var(--spacing-1);">
-                            <a href="{{ item.url }}" style="color: inherit; text-decoration: none;">{{ item.product.title }}</a>
-                          </h3>
-                          {%- if item.variant.title != 'Default Title' -%}
-                            <p class="cart-item__variant" style="font-size: var(--text-sm); color: var(--color-text);">{{ item.variant.title }}</p>
-                          {%- endif -%}
-                          {%- if item.properties.size > 0 -%}
-                            <div class="cart-item__properties" style="font-size: var(--text-sm); color: var(--color-text); margin-top: var(--spacing-2);">
-                              {%- for prop in item.properties -%}
-                                {%- if prop.last != blank -%}
-                                  <p>{{ prop.first }}: {{ prop.last }}</p>
-                                {%- endif -%}
-                              {%- endfor -%}
-                            </div>
-                          {%- endif -%}
-                          <button
-                            type="button"
-                            class="cart-item__remove-link"
-                            data-remove-item
-                            data-line="{{ forloop.index }}"
-                            style="background: none; border: none; color: var(--color-text); font-size: var(--text-sm); cursor: pointer; padding: 0; margin-top: var(--spacing-2); text-decoration: underline;"
-                          >
-                            Remove
-                          </button>
-                        </div>
-                      </div>
-                    </td>
-                    <td style="padding: var(--spacing-6) 0; text-align: center;">
-                      <div class="cart-item__quantity" style="display: inline-flex; align-items: center; border: 1px solid var(--color-border); border-radius: var(--radius-md);">
-                        <button
-                          type="button"
-                          class="cart-item__qty-btn"
-                          data-qty-update
-                          data-line="{{ forloop.index }}"
-                          data-qty="{{ item.quantity | minus: 1 }}"
-                          style="background: none; border: none; padding: var(--spacing-2) var(--spacing-3); cursor: pointer;"
-                          aria-label="Decrease quantity"
-                        >
-                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <line x1="5" y1="12" x2="19" y2="12"></line>
-                          </svg>
-                        </button>
-                        <input
-                          type="number"
-                          class="cart-item__qty-input"
-                          name="updates[]"
-                          value="{{ item.quantity }}"
-                          min="0"
-                          data-line="{{ forloop.index }}"
-                          style="width: 50px; text-align: center; border: none; padding: var(--spacing-2);"
-                        >
-                        <button
-                          type="button"
-                          class="cart-item__qty-btn"
-                          data-qty-update
-                          data-line="{{ forloop.index }}"
-                          data-qty="{{ item.quantity | plus: 1 }}"
-                          style="background: none; border: none; padding: var(--spacing-2) var(--spacing-3); cursor: pointer;"
-                          aria-label="Increase quantity"
-                        >
-                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <line x1="12" y1="5" x2="12" y2="19"></line>
-                            <line x1="5" y1="12" x2="19" y2="12"></line>
-                          </svg>
-                        </button>
-                      </div>
-                    </td>
-                    <td style="padding: var(--spacing-6) 0; text-align: right;">
-                      {%- if item.original_line_price != item.final_line_price -%}
-                        <span class="cart-item__price-original" style="text-decoration: line-through; color: var(--color-text); font-size: var(--text-sm);">
-                          {{ item.original_line_price | money }}
-                        </span>
-                      {%- endif -%}
-                      <span class="cart-item__price-final">{{ item.final_line_price | money }}</span>
-                      {%- if item.discounted_stacked_price_allocations.size > 0 -%}
-                        <div class="cart-item__discounts" style="font-size: var(--text-xs); color: var(--color-secondary-green); margin-top: var(--spacing-1);">
-                          {%- for allocation in item.discounted_stacked_price_allocations -%}
-                            {{ allocation.discount_application.title }} (-{{ allocation.amount | money }})
-                          {%- endfor -%}
-                        </div>
-                      {%- endif -%}
-                    </td>
-                  </tr>
-                {%- endfor -%}
-              </tbody>
-            </table>
-
-            <!-- Order Notes -->
-            <div class="cart-template__notes" style="margin-top: var(--spacing-8);">
-              <label for="CartNote" style="display: block; font-weight: 600; margin-bottom: var(--spacing-2);">Order Notes</label>
-              <textarea
-                id="CartNote"
-                name="note"
-                placeholder="Special instructions for your order..."
-                style="width: 100%; padding: var(--spacing-4); border: 1px solid var(--color-border); border-radius: var(--radius-md); min-height: 100px;"
-              >{{ cart.note }}</textarea>
-            </div>
-
-            <!-- Update Button -->
-            <div style="margin-top: var(--spacing-6); display: flex; gap: var(--spacing-4);">
-              <button type="submit" name="update" class="btn btn--secondary">Update Cart</button>
-              <button type="submit" name="checkout" class="btn btn--primary" style="flex: 1;">Proceed to Checkout</button>
-            </div>
-          </form>
+      <div class="cart-footer" style="display: flex; justify-content: space-between; align-items: flex-start; gap: 2rem; flex-wrap: wrap;">
+        <div class="cart-actions" style="flex: 1;">
+          <a href="/collections/all" class="button" style="display: inline-block; background: #f4f4f4; color: var(--color-text);">Continue Shopping</a>
         </div>
 
-        <!-- Cart Summary -->
-        <div class="cart-template__summary" style="background: var(--color-background-alt); padding: var(--spacing-6); border-radius: var(--radius-lg); position: sticky; top: var(--spacing-6);">
-          <h2 style="font-size: var(--text-xl); margin-bottom: var(--spacing-6);">Order Summary</h2>
-
-          <div class="cart-template__summary-line" style="display: flex; justify-content: space-between; margin-bottom: var(--spacing-4);">
+        <div class="cart-summary" style="min-width: 300px; padding: 1.5rem; background: #f9f9f9; border-radius: 4px;">
+          <h3 style="margin-bottom: 1rem;">Order Summary</h3>
+          
+          <div class="summary-row" style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
             <span>Subtotal</span>
             <span>{{ cart.total_price | money }}</span>
           </div>
-
-          {%- if cart.total_discount > 0 -%}
-            <div class="cart-template__summary-line cart-template__discount" style="display: flex; justify-content: space-between; margin-bottom: var(--spacing-4); color: var(--color-secondary-green);">
-              <span>Discounts</span>
+          
+          {% if section.settings.show_discounts and cart.total_discount > 0 %}
+            <div class="summary-row discount" style="display: flex; justify-content: space-between; margin-bottom: 0.5rem; color: #22c55e;">
+              <span>Discount</span>
               <span>-{{ cart.total_discount | money }}</span>
             </div>
-          {%- endif -%}
-
-          <p style="font-size: var(--text-xs); color: var(--color-text); margin-bottom: var(--spacing-4);">
-            Shipping and taxes calculated at checkout.
+          {% endif %}
+          
+          <div class="summary-row total" style="display: flex; justify-content: space-between; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #ddd; font-weight: bold; font-size: 1.25rem;">
+            <span>Total</span>
+            <span>{{ cart.total_price | money }}</span>
+          </div>
+          
+          <p class="shipping-note" style="font-size: 0.875rem; color: #666; margin-top: 1rem;">
+            Shipping & taxes calculated at checkout
           </p>
 
-          {%- if section.settings.show_free_shipping_threshold -%}
-            {%- assign free_shipping_threshold = section.settings.free_shipping_threshold | times: 100 -%}
-            {%- if cart.total_price < free_shipping_threshold -%}
-              {%- assign remaining = free_shipping_threshold | minus: cart.total_price -%}
-              <div class="cart-template__free-shipping-progress" style="margin-bottom: var(--spacing-6); padding: var(--spacing-4); background: var(--color-background); border-radius: var(--radius-md);">
-                <p style="font-size: var(--text-sm); margin-bottom: var(--spacing-2);">
-                  Add {{ remaining | money }} more to qualify for FREE shipping!
-                </p>
-                <div style="height: 6px; background: var(--color-border); border-radius: 3px; overflow: hidden;">
-                  <div style="height: 100%; width: {{ cart.total_price | times: 100 | divided_by: free_shipping_threshold }}%; background: var(--color-secondary-green); transition: width 0.3s;"></div>
-                </div>
-              </div>
-            {%- else -%}
-              <div class="cart-template__free-shipping-qualified" style="margin-bottom: var(--spacing-6); padding: var(--spacing-4); background: var(--color-secondary-green); color: white; border-radius: var(--radius-md); text-align: center;">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; margin-right: var(--spacing-2);">
-                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-                </svg>
-                You've qualified for FREE shipping!
-              </div>
-            {%- endif -%}
-          {%- endif -%}
-
-          <a href="{{ routes.checkout_url }}" class="btn btn--primary btn--lg btn--full-width" style="margin-bottom: var(--spacing-4);">
-            Checkout
-          </a>
-
-          {%- if section.settings.show_express_checkout -%}
-            <div class="cart-template__express-checkout" style="margin-top: var(--spacing-4);">
-              <p style="text-align: center; margin-bottom: var(--spacing-2); color: var(--color-text);">or</p>
-              <button class="btn btn--secondary btn--full-width" style="margin-bottom: var(--spacing-2);">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" style="vertical-align: middle; margin-right: var(--spacing-2);">
-                  <path d="M17.8 5.2H16V3c0-.6-.4-1-1-1H9c-.6 0-1 .4-1 1v2.2H6.2c-1.1 0-2 .9-2 2v12.6c0 1.1.9 2 2 2h11.6c1.1 0 2-.9 2-2V7.2c0-1.1-.9-2-2-2zM10 3h4v2.2h-4V3zm8 16.8c0 .5-.4.9-.9.9H6.9c-.5 0-.9-.4-.9-.9V7.2c0-.5.4-.9.9-.9h11.2c.5 0 .9.4.9.9v12.6z"/>
-                </svg>
-                Pay with Card
-              </button>
-              <button class="btn btn--secondary btn--full-width">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" style="vertical-align: middle; margin-right: var(--spacing-2);">
-                  <path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.6 0 12 0zm5.8 15.3c-.2.3-.5.5-.9.5H7.1c-.4 0-.7-.2-.9-.5-.2-.3-.2-.7 0-1 .2-.3.5-.5.9-.5h9.8c.4 0 .7.2.9.5.2.3.2.7 0 1z"/>
-                </svg>
-                PayPal
-              </button>
-            </div>
-          {%- endif -%}
-
-          <!-- Trust Badges -->
-          {%- if section.settings.show_trust_badges -%}
-            <div class="cart-template__trust-badges" style="margin-top: var(--spacing-6); padding-top: var(--spacing-6); border-top: 1px solid var(--color-border);">
-              <div style="display: flex; gap: var(--spacing-4); justify-content: center; flex-wrap: wrap;">
-                <div style="text-align: center; font-size: var(--text-xs); color: var(--color-text);">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-bottom: var(--spacing-1);">
-                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-                  </svg>
-                  <p>Secure Checkout</p>
-                </div>
-                <div style="text-align: center; font-size: var(--text-xs); color: var(--color-text);">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-bottom: var(--spacing-1);">
-                    <polyline points="20 6 9 17 4 12"></polyline>
-                  </svg>
-                  <p>Free Returns</p>
-                </div>
-                <div style="text-align: center; font-size: var(--text-xs); color: var(--color-text);">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-bottom: var(--spacing-1);">
-                    <circle cx="12" cy="12" r="10"></circle>
-                    <polyline points="12 6 12 12 16 14"></polyline>
-                  </svg>
-                  <p>Fast Shipping</p>
-                </div>
+          <!-- Free Shipping Progress -->
+          {% assign free_threshold = settings.cart_free_shipping_threshold | times: 100 %}
+          {% assign remaining = free_threshold | minus: cart.total_price %}
+          {% if remaining > 0 %}
+            <div class="free-shipping-progress" style="margin-top: 1rem;">
+              <p style="font-size: 0.875rem; color: #666; margin-bottom: 0.5rem;">
+                Add {{ remaining | money }} more for free shipping!
+              </p>
+              <div style="background: #eee; height: 8px; border-radius: 4px; overflow: hidden;">
+                <div style="background: var(--color-accent); height: 100%; width: {{ cart.total_price | times: 100.0 | divided_by: free_threshold }}%;"></div>
               </div>
             </div>
-          {%- endif -%}
-        </div>
-      </div>
+          {% else %}
+            <p style="font-size: 0.875rem; color: #22c55e; margin-top: 1rem;">
+              🎉 You've unlocked free shipping!
+            </p>
+          {% endif %}
 
-      <!-- Upsell Products Section -->
-      {%- if section.settings.enable_cart_upsell -%}
-        <div class="cart-template__upsells" style="margin-top: var(--spacing-16); padding-top: var(--spacing-12); border-top: 1px solid var(--color-border);">
-          <h2 style="font-size: var(--text-xl); margin-bottom: var(--spacing-6); text-align: center;">You May Also Like</h2>
-          <div class="grid grid--cols-4">
-            {%- assign upsell_collection = collections[section.settings.upsell_collection] -%}
-            {%- for product in upsell_collection.products limit: 4 -%}
-              {%- unless cart.contains_product(product) -%}
-                {%- render 'product-card', product: product -%}
-              {%- endunless -%}
-            {%- endfor -%}
+          <button type="submit" name="checkout" class="button" style="width: 100%; margin-top: 1.5rem;">Proceed to Checkout</button>
+          
+          <!-- Express Checkout -->
+          <div class="express-checkout" style="margin-top: 1rem;">
+            {{ content_for_additional_checkout_buttons }}
           </div>
         </div>
-      {%- endif -%}
-    {%- else -%}
-      <!-- Empty Cart State -->
-      <div class="cart-template__empty" style="text-align: center; padding: var(--spacing-16);">
-        <svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" style="opacity: 0.3; margin-bottom: var(--spacing-6);">
-          <circle cx="9" cy="21" r="1"></circle>
-          <circle cx="20" cy="21" r="1"></circle>
-          <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
-        </svg>
-        <h2 style="font-size: var(--text-2xl); margin-bottom: var(--spacing-4);">Your cart is empty</h2>
-        <p style="color: var(--color-text); margin-bottom: var(--spacing-8);">Looks like you haven't added anything to your cart yet.</p>
-        <a href="{{ routes.all_products_collection_url }}" class="btn btn--primary btn--lg">Start Shopping</a>
       </div>
-    {%- endif -%}
-  </div>
+    </form>
+
+    <!-- Upsell Products -->
+    {% if section.settings.show_upsell %}
+      <section class="cart-upsell" style="margin-top: 3rem; padding-top: 2rem; border-top: 1px solid #eee;">
+        <h2 style="text-align: center; margin-bottom: 2rem;">You May Also Like</h2>
+        <div class="product-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 1.5rem;">
+          {% assign upsell_collection = collections['all'].products | limit: 4 %}
+          {% for product in upsell_collection %}
+            {% unless cart.contains_product_id == true %}
+              {% render 'product-card', product: product %}
+            {% endunless %}
+          {% endfor %}
+        </div>
+      </section>
+    {% endif %}
+
+  {% else %}
+    <!-- Empty Cart State -->
+    <div class="cart-empty" style="text-align: center; padding: 4rem 2rem;">
+      <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="#ccc" style="margin-bottom: 1rem;">
+        <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+      </svg>
+      <h2 style="font-size: 1.5rem; margin-bottom: 1rem;">Your cart is empty</h2>
+      <p style="color: #666; margin-bottom: 2rem;">Looks like you haven't added anything to your cart yet.</p>
+      <a href="/collections/all" class="button">Start Shopping</a>
+    </div>
+  {% endif %}
 </div>
 
 <script>
-  // Cart quantity update and remove functionality
-  document.querySelectorAll('[data-qty-update]').forEach(button => {
-    button.addEventListener('click', function() {
-      const line = this.dataset.line;
-      const qty = parseInt(this.dataset.qty);
-      const input = document.querySelector(`.cart-item__qty-input[data-line="${line}"]`);
-      
-      if (input) {
-        input.value = qty;
-        // Auto-submit form on quantity change
-        input.form.submit();
-      }
+  document.addEventListener('DOMContentLoaded', function() {
+    const qtyInputs = document.querySelectorAll('.cart-item input[type="number"]');
+    const removeBtns = document.querySelectorAll('.remove-btn');
+    
+    // Quantity controls
+    document.querySelectorAll('.qty-minus').forEach(btn => {
+      btn.addEventListener('click', function() {
+        const line = this.dataset.line;
+        const input = document.querySelector(`input[data-line="${line}"]`);
+        if (parseInt(input.value) > 1) {
+          input.value = parseInt(input.value) - 1;
+          updateCart();
+        }
+      });
     });
-  });
-
-  document.querySelectorAll('[data-remove-item]').forEach(button => {
-    button.addEventListener('click', function() {
-      const line = this.dataset.line;
-      const input = document.querySelector(`.cart-item__qty-input[data-line="${line}"]`);
-      
-      if (input) {
+    
+    document.querySelectorAll('.qty-plus').forEach(btn => {
+      btn.addEventListener('click', function() {
+        const line = this.dataset.line;
+        const input = document.querySelector(`input[data-line="${line}"]`);
+        input.value = parseInt(input.value) + 1;
+        updateCart();
+      });
+    });
+    
+    // Remove items
+    removeBtns.forEach(btn => {
+      btn.addEventListener('click', function() {
+        const line = this.dataset.line;
+        const input = document.querySelector(`input[data-line="${line}"]`);
         input.value = 0;
-        input.form.submit();
-      }
+        updateCart();
+      });
     });
+    
+    function updateCart() {
+      document.getElementById('cart-form').submit();
+    }
   });
 </script>
 
 {% schema %}
 {
-  "name": "Main Cart",
+  "name": "Cart page",
   "settings": [
     {
       "type": "checkbox",
-      "id": "show_free_shipping_threshold",
-      "label": "Show Free Shipping Threshold",
-      "default": true
-    },
-    {
-      "type": "number",
-      "id": "free_shipping_threshold",
-      "label": "Free Shipping Threshold",
-      "default": 50
-    },
-    {
-      "type": "checkbox",
-      "id": "enable_cart_upsell",
-      "label": "Enable Cart Upsell",
-      "default": true
-    },
-    {
-      "type": "collection",
-      "id": "upsell_collection",
-      "label": "Upsell Collection"
-    },
-    {
-      "type": "checkbox",
-      "id": "show_express_checkout",
-      "label": "Show Express Checkout",
+      "id": "show_upsell",
+      "label": "Show upsell products",
       "default": true
     },
     {
       "type": "checkbox",
-      "id": "show_trust_badges",
-      "label": "Show Trust Badges",
+      "id": "show_notes",
+      "label": "Show order notes",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_discounts",
+      "label": "Show discounts",
       "default": true
     }
   ]
