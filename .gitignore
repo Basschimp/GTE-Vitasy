@@ -1,7 +1,61 @@
-# Image files
-*.png
-*.jpg
-*.jpeg
-*.bmp
-*.gif
-*.webm
+```
+# Configuration files
+config/
+
+# Logs and temporary files
+*.log
+*.tmp
+*.swp
+
+# Environment variables
+.env
+.env.local
+*.env.*
+
+# Editors
+.vscode/
+.idea/
+
+# Dependencies
+node_modules/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+venv/
+.venv/
+.envrc
+.venv.bak/
+pip-log.txt
+pip-selfcheck.json
+
+# Build artifacts
+build/
+dist/
+*.egg-info/
+.installed.cfg
+.coverage
+htmlcov/
+.coverage.*
+.tox/
+.nox/
+.pytest_cache/
+.hypothesis/
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Icon?
+```
+
+Wait, let me reconsider this. The only modified file is `vitasy-theme/config/theme.json` which appears to be a configuration file. There are no build artifacts, dependency directories, or temporary files in the changes. According to rule 6, if the changes contain only source or config files and no build artifacts, dependencies, or temp files, I should output an empty .gitignore.
+
+```
+
+```
