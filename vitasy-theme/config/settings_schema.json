@@ -1,193 +1,184 @@
-{
-  "name": "vitasy-theme",
-  "version": "1.0.0",
-  "theme_type": "regular",
-  "description": "Clinical Premium Supplement Brand - Shopify 2.0 Theme for Vitasy",
-  "author": "Vitasy",
-  "license": "proprietary",
-  
-  "settings_schema": [
-    {
-      "name": "Colors",
-      "theme_name": "Colors",
-      "settings": [
-        {
-          "type": "color",
-          "id": "color_primary_navy",
-          "label": "Primary Navy",
-          "default": "#102A43"
-        },
-        {
-          "type": "color",
-          "id": "color_secondary_green",
-          "label": "Secondary Green",
-          "default": "#2BB673"
-        },
-        {
-          "type": "color",
-          "id": "color_background",
-          "label": "Background",
-          "default": "#F8FAFC"
-        },
-        {
-          "type": "color",
-          "id": "color_text",
-          "label": "Text",
-          "default": "#1F2937"
-        },
-        {
-          "type": "color",
-          "id": "color_border",
-          "label": "Border",
-          "default": "#E5E7EB"
-        },
-        {
-          "type": "color",
-          "id": "color_success",
-          "label": "Success",
-          "default": "#22C55E"
-        }
-      ]
-    },
-    {
-      "name": "Typography",
-      "theme_name": "Typography",
-      "settings": [
-        {
-          "type": "font_picker",
-          "id": "type_heading_font",
-          "label": "Heading Font",
-          "default": "manrope_n4"
-        },
-        {
-          "type": "font_picker",
-          "id": "type_body_font",
-          "label": "Body Font",
-          "default": "inter_n4"
-        }
-      ]
-    },
-    {
-      "name": "Brand",
-      "theme_name": "Brand Settings",
-      "settings": [
-        {
-          "type": "image_picker",
-          "id": "brand_logo",
-          "label": "Logo"
-        },
-        {
-          "type": "image_picker",
-          "id": "brand_logo_mobile",
-          "label": "Logo (Mobile)"
-        },
-        {
-          "type": "text",
-          "id": "brand_tagline",
-          "label": "Brand Tagline",
-          "default": "Science-Backed Supplements for Modern Health"
-        }
-      ]
-    },
-    {
-      "name": "Social Media",
-      "theme_name": "Social Media",
-      "settings": [
-        {
-          "type": "url",
-          "id": "social_facebook_link",
-          "label": "Facebook URL"
-        },
-        {
-          "type": "url",
-          "id": "social_instagram_link",
-          "label": "Instagram URL"
-        },
-        {
-          "type": "url",
-          "id": "social_twitter_link",
-          "label": "Twitter URL"
-        },
-        {
-          "type": "url",
-          "id": "social_youtube_link",
-          "label": "YouTube URL"
-        },
-        {
-          "type": "url",
-          "id": "social_tiktok_link",
-          "label": "TikTok URL"
-        }
-      ]
-    },
-    {
-      "name": "Subscription",
-      "theme_name": "Subscription Settings",
-      "settings": [
-        {
-          "type": "checkbox",
-          "id": "subscription_enabled",
-          "label": "Enable Subscriptions",
-          "default": true
-        },
-        {
-          "type": "text",
-          "id": "subscription_discount",
-          "label": "Subscription Discount (%)",
-          "default": "10"
-        },
-        {
-          "type": "richtext",
-          "id": "subscription_benefits",
-          "label": "Subscription Benefits",
-          "default": "<p>Save money every order<br>Never run out<br>Cancel anytime</p>"
-        }
-      ]
-    },
-    {
-      "name": "Reviews",
-      "theme_name": "Judge.me Settings",
-      "settings": [
-        {
-          "type": "checkbox",
-          "id": "reviews_enabled",
-          "label": "Enable Reviews",
-          "default": true
-        },
-        {
-          "type": "text",
-          "id": "judge_me_public_key",
-          "label": "Judge.me Public Key"
-        }
-      ]
-    },
-    {
-      "name": "Klaviyo",
-      "theme_name": "Klaviyo Settings",
-      "settings": [
-        {
-          "type": "text",
-          "id": "klaviyo_public_key",
-          "label": "Klaviyo Public Key"
-        }
-      ]
-    },
-    {
-      "name": "Analytics",
-      "theme_name": "Analytics",
-      "settings": [
-        {
-          "type": "text",
-          "id": "analytics_ga4_id",
-          "label": "GA4 Measurement ID",
-          "placeholder": "G-XXXXXXXXXX"
-        },
-        {
-          "type": "textarea",
-          "id": "analytics_custom_script",
-          "label": "Custom Analytics Script"
-        }
-      ]
-    }
-  ]
-}
+[
+  {
+    "name": "theme_info",
+    "theme_name": "Vitasy",
+    "theme_version": "1.0.0",
+    "theme_author": "Vitasy",
+    "theme_documentation_url": "https://help.shopify.com",
+    "theme_support_url": "https://support.vitasysupplements.com"
+  },
+  {
+    "name": "Colors",
+    "settings": [
+      {
+        "type": "color",
+        "id": "color_primary_navy",
+        "label": "Primary Navy",
+        "default": "#102A43"
+      },
+      {
+        "type": "color",
+        "id": "color_secondary_green",
+        "label": "Secondary Green",
+        "default": "#2BB673"
+      },
+      {
+        "type": "color",
+        "id": "color_background",
+        "label": "Background",
+        "default": "#F8FAFC"
+      },
+      {
+        "type": "color",
+        "id": "color_text",
+        "label": "Text",
+        "default": "#1F2937"
+      },
+      {
+        "type": "color",
+        "id": "color_border",
+        "label": "Border",
+        "default": "#E5E7EB"
+      },
+      {
+        "type": "color",
+        "id": "color_success",
+        "label": "Success",
+        "default": "#22C55E"
+      }
+    ]
+  },
+  {
+    "name": "Typography",
+    "settings": [
+      {
+        "type": "font_picker",
+        "id": "type_heading_font",
+        "label": "Heading Font",
+        "default": "manrope_n4"
+      },
+      {
+        "type": "font_picker",
+        "id": "type_body_font",
+        "label": "Body Font",
+        "default": "inter_n4"
+      }
+    ]
+  },
+  {
+    "name": "Brand",
+    "settings": [
+      {
+        "type": "image_picker",
+        "id": "brand_logo",
+        "label": "Logo"
+      },
+      {
+        "type": "image_picker",
+        "id": "brand_logo_mobile",
+        "label": "Logo (Mobile)"
+      },
+      {
+        "type": "text",
+        "id": "brand_tagline",
+        "label": "Brand Tagline",
+        "default": "Science-Backed Supplements for Modern Health"
+      }
+    ]
+  },
+  {
+    "name": "Social Media",
+    "settings": [
+      {
+        "type": "url",
+        "id": "social_facebook_link",
+        "label": "Facebook URL"
+      },
+      {
+        "type": "url",
+        "id": "social_instagram_link",
+        "label": "Instagram URL"
+      },
+      {
+        "type": "url",
+        "id": "social_twitter_link",
+        "label": "Twitter URL"
+      },
+      {
+        "type": "url",
+        "id": "social_youtube_link",
+        "label": "YouTube URL"
+      },
+      {
+        "type": "url",
+        "id": "social_tiktok_link",
+        "label": "TikTok URL"
+      }
+    ]
+  },
+  {
+    "name": "Subscription",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "subscription_enabled",
+        "label": "Enable Subscriptions",
+        "default": true
+      },
+      {
+        "type": "text",
+        "id": "subscription_discount",
+        "label": "Subscription Discount (%)",
+        "default": "10"
+      },
+      {
+        "type": "richtext",
+        "id": "subscription_benefits",
+        "label": "Subscription Benefits",
+        "default": "<p>Save money every order<br>Never run out<br>Cancel anytime</p>"
+      }
+    ]
+  },
+  {
+    "name": "Reviews",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "reviews_enabled",
+        "label": "Enable Reviews",
+        "default": true
+      },
+      {
+        "type": "text",
+        "id": "judge_me_public_key",
+        "label": "Judge.me Public Key"
+      }
+    ]
+  },
+  {
+    "name": "Klaviyo",
+    "settings": [
+      {
+        "type": "text",
+        "id": "klaviyo_public_key",
+        "label": "Klaviyo Public Key"
+      }
+    ]
+  },
+  {
+    "name": "Analytics",
+    "settings": [
+      {
+        "type": "text",
+        "id": "analytics_ga4_id",
+        "label": "GA4 Measurement ID",
+        "placeholder": "G-XXXXXXXXXX"
+      },
+      {
+        "type": "textarea",
+        "id": "analytics_custom_script",
+        "label": "Custom Analytics Script"
+      }
+    ]
+  }
+]
