@@ -3,9 +3,8 @@
     "main": {
       "type": "main-product",
       "settings": {
-        "show_subscription": true,
-        "show_reviews": true,
-        "show_cross_sell": true
+        "show_cross_sell": true,
+        "show_subscription": true
       }
     }
   },

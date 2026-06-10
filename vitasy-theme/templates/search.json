@@ -1,12 +1,7 @@
 {
   "sections": {
     "main": {
-      "type": "main-search",
-      "settings": {
-        "show_products": true,
-        "show_articles": true,
-        "show_pages": true
-      }
+      "type": "main-search"
     }
   },
   "order": ["main"]

@@ -1,0 +1,291 @@
+{%- style -%}
+  .footer {
+    background-color: rgb(var(--color-accent-1));
+    color: rgb(var(--color-background));
+    padding: 4rem 2rem 2rem;
+    margin-top: 4rem;
+  }
+
+  .footer__container {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 3rem;
+  }
+
+  .footer__block h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    color: rgb(var(--color-background));
+  }
+
+  .footer__menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .footer__menu li {
+    margin-bottom: 0.75rem;
+  }
+
+  .footer__menu a {
+    color: rgba(var(--color-background), 0.8);
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+
+  .footer__menu a:hover {
+    color: rgb(var(--color-background));
+  }
+
+  .footer__newsletter-form {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 1rem;
+  }
+
+  .footer__newsletter-input {
+    flex: 1;
+    padding: 0.75rem 1rem;
+    border: 1px solid rgba(var(--color-background), 0.3);
+    border-radius: 4px;
+    background: transparent;
+    color: rgb(var(--color-background));
+    font-size: 0.9rem;
+  }
+
+  .footer__newsletter-input::placeholder {
+    color: rgba(var(--color-background), 0.5);
+  }
+
+  .footer__newsletter-button {
+    padding: 0.75rem 1.5rem;
+    background-color: rgb(var(--color-background));
+    color: rgb(var(--color-accent-1));
+    border: none;
+    border-radius: 4px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+  }
+
+  .footer__newsletter-button:hover {
+    opacity: 0.9;
+  }
+
+  .footer__bottom {
+    max-width: 1400px;
+    margin: 3rem auto 0;
+    padding-top: 2rem;
+    border-top: 1px solid rgba(var(--color-background), 0.2);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .footer__social {
+    display: flex;
+    gap: 1rem;
+  }
+
+  .footer__social a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background-color: rgba(var(--color-background), 0.1);
+    color: rgb(var(--color-background));
+    transition: background-color 0.2s ease;
+  }
+
+  .footer__social a:hover {
+    background-color: rgba(var(--color-background), 0.2);
+  }
+
+  .footer__social svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .footer__copyright {
+    color: rgba(var(--color-background), 0.6);
+    font-size: 0.9rem;
+  }
+
+  .footer__payments {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+  }
+
+  .footer__payment-icon {
+    width: 40px;
+    height: 25px;
+    background-color: rgba(var(--color-background), 0.1);
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  @media screen and (max-width: 768px) {
+    .footer {
+      padding: 3rem 1rem 1.5rem;
+    }
+
+    .footer__container {
+      grid-template-columns: 1fr;
+      gap: 2rem;
+    }
+
+    .footer__bottom {
+      flex-direction: column;
+      text-align: center;
+    }
+  }
+{%- endstyle -%}
+
+<footer class="footer">
+  <div class="footer__container">
+    {% if section.settings.show_newsletter %}
+      <div class="footer__block footer__newsletter">
+        <h3>{{ section.settings.newsletter_heading }}</h3>
+        <p style="opacity: 0.8; margin-bottom: 1rem;">{{ section.settings.newsletter_subheading }}</p>
+        <form class="footer__newsletter-form" action="/contact#newsletter-form" method="post">
+          <input type="hidden" name="form_type" value="customer">
+          <input type="hidden" name="utf8" value="✓">
+          <input type="email" name="contact[email]" class="footer__newsletter-input" placeholder="Enter your email" aria-label="Email" required>
+          <button type="submit" class="footer__newsletter-button">Subscribe</button>
+        </form>
+      </div>
+    {% endif %}
+
+    {% for block in section.blocks %}
+      <div class="footer__block">
+        <h3>{{ block.settings.heading }}</h3>
+        {% if block.settings.menu != blank %}
+          <ul class="footer__menu">
+            {% for link in block.settings.menu.links %}
+              <li>
+                <a href="{{ link.url }}">{{ link.title }}</a>
+              </li>
+            {% endfor %}
+          </ul>
+        {% endif %}
+      </div>
+    {% endfor %}
+  </div>
+
+  <div class="footer__bottom">
+    <p class="footer__copyright">
+      {{ 'sections.footer.copyright' | t: year: 'now' | date: '%Y', shop: shop.name }}
+    </p>
+
+    <div class="footer__social">
+      {% if section.settings.social_facebook != blank %}
+        <a href="{{ section.settings.social_facebook }}" aria-label="Facebook" target="_blank" rel="noopener">
+          <svg fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+        </a>
+      {% endif %}
+      {% if section.settings.social_instagram != blank %}
+        <a href="{{ section.settings.social_instagram }}" aria-label="Instagram" target="_blank" rel="noopener">
+          <svg fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+        </a>
+      {% endif %}
+      {% if section.settings.social_twitter != blank %}
+        <a href="{{ section.settings.social_twitter }}" aria-label="Twitter" target="_blank" rel="noopener">
+          <svg fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+        </a>
+      {% endif %}
+    </div>
+
+    <div class="footer__payments">
+      <div class="footer__payment-icon">
+        <svg width="24" height="15" viewBox="0 0 24 15" fill="none"><rect width="24" height="15" rx="2" fill="currentColor" fill-opacity="0.3"/><text x="12" y="10" text-anchor="middle" font-size="6" fill="currentColor">VISA</text></svg>
+      </div>
+      <div class="footer__payment-icon">
+        <svg width="24" height="15" viewBox="0 0 24 15" fill="none"><rect width="24" height="15" rx="2" fill="currentColor" fill-opacity="0.3"/><text x="12" y="10" text-anchor="middle" font-size="6" fill="currentColor">MC</text></svg>
+      </div>
+      <div class="footer__payment-icon">
+        <svg width="24" height="15" viewBox="0 0 24 15" fill="none"><rect width="24" height="15" rx="2" fill="currentColor" fill-opacity="0.3"/><text x="12" y="10" text-anchor="middle" font-size="6" fill="currentColor">PAY</text></svg>
+      </div>
+    </div>
+  </div>
+</footer>
+
+{% schema %}
+{
+  "name": "Footer",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_newsletter",
+      "label": "Show newsletter signup",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "newsletter_heading",
+      "label": "Newsletter heading",
+      "default": "Subscribe to our newsletter"
+    },
+    {
+      "type": "textarea",
+      "id": "newsletter_subheading",
+      "label": "Newsletter subheading",
+      "default": "Get the latest updates and exclusive offers"
+    },
+    {
+      "type": "url",
+      "id": "social_facebook",
+      "label": "Facebook URL"
+    },
+    {
+      "type": "url",
+      "id": "social_instagram",
+      "label": "Instagram URL"
+    },
+    {
+      "type": "url",
+      "id": "social_twitter",
+      "label": "Twitter URL"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "link_list",
+      "name": "Menu",
+      "settings": [
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading",
+          "default": "Quick links"
+        },
+        {
+          "type": "link_list",
+          "id": "menu",
+          "label": "Menu"
+        }
+      ]
+    }
+  ],
+  "default": {
+    "blocks": [
+      {
+        "type": "link_list"
+      },
+      {
+        "type": "link_list"
+      }
+    ]
+  }
+}
+{% endschema %}

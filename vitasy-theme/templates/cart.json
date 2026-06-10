@@ -1,12 +1,7 @@
 {
   "sections": {
     "main": {
-      "type": "main-cart",
-      "settings": {
-        "show_upsell": true,
-        "show_notes": true,
-        "show_discounts": true
-      }
+      "type": "main-cart"
     }
   },
   "order": ["main"]
