@@ -1,11 +1,19 @@
 ```
-# Shopify/Liquid theme specific
-.vitasy-theme/cache/
-.vitasy-theme/dist/
-.vitasy-theme/build/
+# Compressed files
+*.zip
+
+# Shopify theme specific
+.vinyl-cache/
+.sass-cache/
+*.liquid.map
 
 # Dependencies
 node_modules/
+
+# Build artifacts
+dist/
+build/
+target/
 
 # Environment
 .env
@@ -15,15 +23,34 @@ node_modules/
 # Logs
 *.log
 
-# Temporary files
-*.tmp
-*.swp
-
 # Editors
 .vscode/
 .idea/
+*.swp
+*.swo
 
-# OS generated files
+# System
 .DS_Store
 Thumbs.db
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.so
+
+# Coverage
+coverage/
+htmlcov/
+.coverage
+
+# Testing
+.pytest_cache/
+.mypy_cache/
+
+# Temporary files
+*.tmp
+*.temp
 ```

@@ -1,5 +1,6 @@
 {%- comment -%}
   Main Product Section
+  Renders product page with subscription options, reviews, cross-sell, and variant selector
 {%- endcomment -%}
 
 <div class="product-template" data-product-id="{{ product.id }}">
@@ -17,6 +18,25 @@
             style="width: 100%; border-radius: var(--radius-lg);"
           >
         {%- endif -%}
+
+        {%- if product.media.size > 1 -%}
+          <div class="product-template__thumbnails" style="display: flex; gap: var(--spacing-4); margin-top: var(--spacing-4); overflow-x: auto;">
+            {%- for media in product.media limit: 5 -%}
+              <button
+                class="product-template__thumbnail {% if forloop.first %}active{% endif %}"
+                data-media-id="{{ media.id }}"
+                style="flex-shrink: 0; border: 2px solid {% if forloop.first %}var(--color-primary){% else %}transparent{% endif %}; border-radius: var(--radius-md); cursor: pointer;"
+              >
+                <img
+                  src="{{ media | image_url: width: 150 }}"
+                  alt="{{ media.alt | default: product.title }}"
+                  style="width: 80px; height: 80px; object-fit: cover; border-radius: var(--radius-sm);"
+                  loading="lazy"
+                >
+              </button>
+            {%- endfor -%}
+          </div>
+        {%- endif -%}
       </div>
 
       <!-- Product Info -->
@@ -26,22 +46,103 @@
         {%- if settings.reviews_enabled -%}
           <div class="product-template__reviews" style="margin-bottom: var(--spacing-4);">
             <div class="jdgm-widget jdgm-preview-badge" data-uid="{{ product.id }}"></div>
+            {%- if product.metafields.reviews.average.value != blank -%}
+              <span style="margin-left: var(--spacing-2); color: var(--color-text);">
+                {{ product.metafields.reviews.average.value }} out of 5 stars ({{ product.metafields.reviews.review_count.value }} reviews)
+              </span>
+            {%- endif -%}
           </div>
         {%- endif -%}
 
         <div class="product-template__price" style="font-size: var(--text-2xl); font-weight: 600; margin-bottom: var(--spacing-6);">
-          {{ product.selected_or_first_available_variant.price | money }}
+          {%- if product.selected_or_first_available_variant.compare_at_price > product.selected_or_first_available_variant.price -%}
+            <span style="text-decoration: line-through; color: var(--color-text); font-size: var(--text-lg); margin-right: var(--spacing-2);">
+              {{ product.selected_or_first_available_variant.compare_at_price | money }}
+            </span>
+          {%- endif -%}
+          <span>{{ product.selected_or_first_available_variant.price | money }}</span>
+          {%- if product.selected_or_first_available_variant.unit_price_measurement -%}
+            <span style="font-size: var(--text-sm); color: var(--color-text); margin-left: var(--spacing-2);">
+              {{ product.selected_or_first_available_variant.unit_price | money }}/{{ product.selected_or_first_available_variant.unit_price_measurement.reference_value }}{{ product.selected_or_first_available_variant.unit_price_measurement.reference_unit }}
+            </span>
+          {%- endif -%}
         </div>
 
         {%- if settings.subscription_enabled -%}
           {% render 'subscription-widget', product: product %}
         {%- endif -%}
 
+        <!-- Variant Selector -->
+        {%- unless product.has_only_default_variant -%}
+          <div class="product-template__variants" style="margin-bottom: var(--spacing-6);">
+            {%- for option in product.options_with_values -%}
+              <div class="product-template__option" style="margin-bottom: var(--spacing-4);">
+                <label class="product-template__option-label" style="display: block; font-weight: 600; margin-bottom: var(--spacing-2);">
+                  {{ option.name }}
+                </label>
+                <div class="product-template__option-values" style="display: flex; gap: var(--spacing-2); flex-wrap: wrap;">
+                  {%- for value in option.values -%}
+                    <button
+                      type="button"
+                      class="product-template__option-value {% if option.selected_value == value %}active{% endif %}"
+                      data-option-name="{{ option.name }}"
+                      data-option-value="{{ value }}"
+                      style="padding: var(--spacing-2) var(--spacing-4); border: 1px solid {% if option.selected_value == value %}var(--color-primary){% else %}var(--color-border){% endif %}; border-radius: var(--radius-md); background: {% if option.selected_value == value %}var(--color-primary){% else %}none{% endif %}; color: {% if option.selected_value == value %}white{% else %}inherit{% endif %}; cursor: pointer;"
+                    >
+                      {{ value }}
+                    </button>
+                  {%- endfor -%}
+                </div>
+              </div>
+            {%- endfor -%}
+          </div>
+        {%- endunless -%}
+
+        <!-- Quantity Selector -->
+        <div class="product-template__quantity" style="margin-bottom: var(--spacing-6);">
+          <label class="product-template__quantity-label" style="display: block; font-weight: 600; margin-bottom: var(--spacing-2);">Quantity</label>
+          <div class="product-template__quantity-selector" style="display: inline-flex; align-items: center; border: 1px solid var(--color-border); border-radius: var(--radius-md);">
+            <button
+              type="button"
+              class="product-template__qty-btn"
+              data-qty-decrease
+              style="background: none; border: none; padding: var(--spacing-2) var(--spacing-3); cursor: pointer;"
+              aria-label="Decrease quantity"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+              </svg>
+            </button>
+            <input
+              type="number"
+              class="product-template__qty-input"
+              name="quantity"
+              value="1"
+              min="1"
+              max="{{ product.selected_or_first_available_variant.inventory_quantity }}"
+              style="width: 60px; text-align: center; border: none; padding: var(--spacing-2);"
+            >
+            <button
+              type="button"
+              class="product-template__qty-btn"
+              data-qty-increase
+              style="background: none; border: none; padding: var(--spacing-2) var(--spacing-3); cursor: pointer;"
+              aria-label="Increase quantity"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+              </svg>
+            </button>
+          </div>
+        </div>
+
         <div class="product-template__description" style="margin-bottom: var(--spacing-6);">
           {{ product.description }}
         </div>
 
-        <form action="{{ routes.cart_add_url }}" method="post" enctype="multipart/form-data">
+        <!-- Add to Cart Form -->
+        <form action="{{ routes.cart_add_url }}" method="post" enctype="multipart/form-data" class="product-template__form">
           <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
 
           <button
@@ -49,6 +150,7 @@
             class="btn btn--primary btn--lg btn--full-width"
             {% unless product.available %}disabled{% endunless %}
             data-add-to-cart
+            style="margin-bottom: var(--spacing-4);"
           >
             {%- if product.available -%}
               Add to Cart
@@ -56,22 +158,169 @@
               Sold Out
             {%- endif -%}
           </button>
+
+          {%- if section.settings.show_dynamic_checkout -%}
+            {{ form | payment_button }}
+          {%- endif -%}
         </form>
 
-        {%- if product.metafields.product.supplement_facts != blank -%}
-          <div class="product-template__supplement-facts" style="margin-top: var(--spacing-8);">
-            <h3>Supplement Facts</h3>
-            {{ product.metafields.product.supplement_facts }}
+        <!-- Product Meta Information -->
+        <div class="product-template__meta" style="margin-top: var(--spacing-8); padding-top: var(--spacing-6); border-top: 1px solid var(--color-border); font-size: var(--text-sm); color: var(--color-text);">
+          {%- if product.vendor != blank -%}
+            <p style="margin-bottom: var(--spacing-2);"><strong>Vendor:</strong> {{ product.vendor }}</p>
+          {%- endif -%}
+          {%- if product.type != blank -%}
+            <p style="margin-bottom: var(--spacing-2);"><strong>Type:</strong> {{ product.type }}</p>
+          {%- endif -%}
+          {%- if product.tags.size > 0 -%}
+            <p><strong>Tags:</strong> {{ product.tags | join: ', ' }}</p>
+          {%- endif -%}
+        </div>
+
+        <!-- Trust Badges -->
+        {%- if section.settings.show_trust_badges -%}
+          <div class="product-template__trust-badges" style="margin-top: var(--spacing-6); display: flex; gap: var(--spacing-6); flex-wrap: wrap;">
+            <div style="display: flex; align-items: center; gap: var(--spacing-2);">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--color-secondary-green);">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+              </svg>
+              <span>Secure Checkout</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: var(--spacing-2);">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--color-secondary-green);">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+              <span>Free Returns</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: var(--spacing-2);">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--color-secondary-green);">
+                <circle cx="12" cy="12" r="10"></circle>
+                <polyline points="12 6 12 12 16 14"></polyline>
+              </svg>
+              <span>Fast Shipping</span>
+            </div>
           </div>
         {%- endif -%}
       </div>
     </div>
+
+    <!-- Cross-Sell Products Section -->
+    {%- if section.settings.enable_cross_sell -%}
+      <div class="product-template__cross-sell" style="margin-top: var(--spacing-16); padding-top: var(--spacing-12); border-top: 1px solid var(--color-border);">
+        <h2 style="font-size: var(--text-xl); margin-bottom: var(--spacing-6); text-align: center;">You May Also Like</h2>
+        <div class="grid grid--cols-4">
+          {%- assign cross_sell_collection = collections[section.settings.cross_sell_collection] -%}
+          {%- for cross_sell_product in cross_sell_collection.products limit: 4 -%}
+            {%- unless cross_sell_product.id == product.id -%}
+              {%- render 'product-card', product: cross_sell_product -%}
+            {%- endunless -%}
+          {%- endfor -%}
+        </div>
+      </div>
+    {%- endif -%}
+
+    <!-- Product Reviews Section -->
+    {%- if settings.reviews_enabled -%}
+      <div class="product-template__reviews-full" style="margin-top: var(--spacing-16); padding-top: var(--spacing-12); border-top: 1px solid var(--color-border);">
+        <h2 style="font-size: var(--text-xl); margin-bottom: var(--spacing-6); text-align: center;">Customer Reviews</h2>
+        <div class="jdgm-widget jdgm-full-rev-widget" data-uid="{{ product.id }}"></div>
+      </div>
+    {%- endif -%}
+
+    {%- if product.metafields.product.supplement_facts != blank -%}
+      <div class="product-template__supplement-facts" style="margin-top: var(--spacing-12);">
+        <h3>Supplement Facts</h3>
+        {{ product.metafields.product.supplement_facts }}
+      </div>
+    {%- endif -%}
   </div>
 </div>
+
+<script>
+  // Product gallery thumbnail switching
+  document.querySelectorAll('.product-template__thumbnail').forEach(thumb => {
+    thumb.addEventListener('click', function() {
+      const mediaId = this.dataset.mediaId;
+      // Switch main image logic here
+      document.querySelectorAll('.product-template__thumbnail').forEach(t => {
+        t.style.borderColor = 'transparent';
+      });
+      this.style.borderColor = 'var(--color-primary)';
+    });
+  });
+
+  // Variant selection
+  document.querySelectorAll('.product-template__option-value').forEach(button => {
+    button.addEventListener('click', function() {
+      const optionName = this.dataset.optionName;
+      const optionValue = this.dataset.optionValue;
+      
+      // Update active state
+      const parent = this.parentElement;
+      parent.querySelectorAll('.product-template__option-value').forEach(b => {
+        b.style.background = 'none';
+        b.style.color = 'inherit';
+        b.style.borderColor = 'var(--color-border)';
+      });
+      this.style.background = 'var(--color-primary)';
+      this.style.color = 'white';
+      this.style.borderColor = 'var(--color-primary)';
+      
+      // Update hidden input and trigger variant change
+      // This would integrate with Shopify's variant selection API
+    });
+  });
+
+  // Quantity selector
+  const qtyInput = document.querySelector('.product-template__qty-input');
+  const decreaseBtn = document.querySelector('[data-qty-decrease]');
+  const increaseBtn = document.querySelector('[data-qty-increase]');
+
+  if (qtyInput && decreaseBtn && increaseBtn) {
+    decreaseBtn.addEventListener('click', () => {
+      const currentValue = parseInt(qtyInput.value) || 1;
+      if (currentValue > 1) {
+        qtyInput.value = currentValue - 1;
+      }
+    });
+
+    increaseBtn.addEventListener('click', () => {
+      const currentValue = parseInt(qtyInput.value) || 1;
+      const maxValue = parseInt(qtyInput.max) || 999;
+      if (currentValue < maxValue) {
+        qtyInput.value = currentValue + 1;
+      }
+    });
+  }
+</script>
 
 {% schema %}
 {
   "name": "Main Product",
-  "settings": []
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_dynamic_checkout",
+      "label": "Show Dynamic Checkout Buttons",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_trust_badges",
+      "label": "Show Trust Badges",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_cross_sell",
+      "label": "Enable Cross-Sell Products",
+      "default": true
+    },
+    {
+      "type": "collection",
+      "id": "cross_sell_collection",
+      "label": "Cross-Sell Collection"
+    }
+  ]
 }
 {% endschema %}
